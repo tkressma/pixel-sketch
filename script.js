@@ -4,10 +4,18 @@ const board = document.getElementById("drawingBoard");
 const clear = document.getElementById("clearBtn");
 const erase = document.getElementById("eraseBtn");
 const gridItem = document.getElementsByClassName("grid-item");
+const grid = document.getElementById("gridBtn");
 
+grid.addEventListener("click", toggleGrid, false);
 clear.addEventListener("click", clearBoard, false);
 erase.addEventListener("click", toggleEraser, false);
 makeGrid(gridSize);
+
+function toggleGrid() {
+  Array.from(gridItem).forEach((element) =>
+    element.classList.toggle("grid-item--nogrid")
+  );
+}
 
 let toggle = true;
 let eraser = false;
@@ -21,8 +29,10 @@ function makeGrid(size) {
   board.style.setProperty("--grid-cols", size);
 
   for (let i = 0; i < size * size; i++) {
-    let cell = document.createElement("div");
-    board.appendChild(cell).className = "grid-item";
+    let gridElement = document.createElement("div");
+    gridElement.classList.add("grid-item");
+    gridElement.setAttribute("draggable", "false");
+    board.appendChild(gridElement);
   }
 }
 

@@ -8,17 +8,21 @@
     <title>Etch-A-Sketch</title>
   </head>
   <body>
-    <header>Sketch</header>
-    <main class="flex container center">
+    <header><h1>Sketch</h1></header>
+    <main class="flex container">
       <aside class="flex options">
-        <button id="colorBtn">Color</button>
-        <button id="rainbowBtn">Rainbow</button>
+        <button id="colorBtn">Pen Tool</button>
+        <button id="rainbowBtn">Rainbow Tool</button>
         <button id="eraseBtn">Eraser</button>
         <button id="clearBtn">Clear Board</button>
+        <button id="saveBtn">Save Image</button>
+        <button id="shadeBtn">Toggle Shade Tool</button>
+        <button id="lightenBtn">Toggle Lighten Tool</button>
+        <button id="gridBtn">Toggle Grid</button>
         <input id="boardSizeSlider" type="range" value="16" min="1" max="64" />
       </aside>
-      <section class="flex center">
-        <div id="drawingBoard" class="drawingBoard"></div>
+      <section class="flex center" draggable="false">
+        <div id="drawingBoard" class="drawingBoard" draggable="false"></div>
       </section>
     </main>
     <script src="script.js"></script>
