@@ -1,10 +1,33 @@
 let gridSize = 16;
 let ink = "#000000";
-const board = document.getElementById("drawingBoard");
+const board = document.getElementById("drawing-board-container");
 const clear = document.getElementById("clearBtn");
 const erase = document.getElementById("eraseBtn");
 const gridItem = document.getElementsByClassName("grid-item");
 const grid = document.getElementById("gridBtn");
+const colorPalette = document.getElementsByClassName("color-palette-option");
+const colorPaletteArr = [
+  "#000000",
+  "#ffffff",
+  "#7f7f7f",
+  "#c3c3c3",
+  "#870016",
+  "#b77b59",
+  "#ed1b26",
+  "#fbafc9",
+  "#fb8028",
+  "#ffc514",
+  "#1eb34f",
+  "#b5e619",
+];
+fillColorPallete();
+// Fill color pallete
+function fillColorPallete() {
+  for (let i = 1; i <= colorPalette.length; i++) {
+    let currentColor = document.getElementById(`color--${i}`);
+    currentColor.style.background = colorPaletteArr[i - 1];
+  }
+}
 
 grid.addEventListener("click", toggleGrid, false);
 clear.addEventListener("click", clearBoard, false);
