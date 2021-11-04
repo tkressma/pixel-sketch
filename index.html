@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Etch-A-Sketch</title>
+  </head>
+  <body>
+    <header>Sketch</header>
+    <main class="flex container center">
+      <aside class="flex options">
+        <button id="colorBtn">Color</button>
+        <button id="rainbowBtn">Rainbow</button>
+        <button id="eraseBtn">Eraser</button>
+        <button id="clearBtn">Clear Board</button>
+        <input id="boardSizeSlider" type="range" value="16" min="1" max="64" />
+      </aside>
+      <section class="flex center">
+        <div id="drawingBoard" class="drawingBoard"></div>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

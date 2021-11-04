@@ -1,0 +1,78 @@
+*,
+*::before,
+::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --grid-cols: 1;
+  --grid-rows: 1;
+}
+
+body {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.options {
+  flex-direction: column;
+  justify-content: center;
+}
+
+button {
+  font-size: 1.5rem;
+  background-color: lightblue;
+  border: 1px solid black;
+  width: 80%;
+  padding: 0.5em 0.75em;
+  border-radius: 10px;
+  margin: 0.5rem auto;
+  transition: 0.2s all ease-in;
+}
+
+button:hover {
+  transform: scale(105%);
+}
+
+.center {
+  justify-content: center;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+main {
+  border: 2px solid black;
+}
+
+aside {
+  padding: 1rem;
+  width: 30%;
+  border-right: 2px solid black;
+}
+
+section {
+  padding: 2rem;
+  width: 70%;
+}
+
+#drawingBoard {
+  display: grid;
+  width: 500px;
+  height: 500px;
+  border: 2px solid black;
+  background-color: white;
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+}
+
+.grid-item {
+  border: 1px solid black;
+  text-align: center;
+}
