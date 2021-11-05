@@ -11,33 +11,48 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-    <title>Etch-A-Sketch</title>
+    <title>Pixel Sketchpad</title>
   </head>
   <body>
     <header class="flex col">
-      <h1 class="title">Pixel Sketch</h1>
-      <p class="slogan">Developed by Thomas Kressman</p>
+      <h1 class="title">Pixel Sketchpad</h1>
+      <p class="slogan">
+        Developed by
+        <a href="https://github.com/tkressma" target="_blank"
+          >Thomas Kressman</a
+        >
+      </p>
     </header>
 
     <main class="container flex">
-      <aside id="options-container flex" class="flex col">
-        <div class="options">
+      <!-- Options Container -->
+      <aside id="options-container" class="flex col">
+        <div class="options shadow">
+          <!-- Tool Buttons -->
           <div class="tools">Tools</div>
-          <div class="brush"><button id="brushBtn">Brush</button></div>
-          <div class="eraser"><button id="eraseBtn">Eraser</button></div>
-          <div class="lighten"><button id="lightenBtn">Lighten</button></div>
-          <div class="shade"><button id="shadeBtn">Shade</button></div>
-          <div class="bucket"><button id="bucketBtn">Bucket</button></div>
-          <div class="rainbow"><button id="rainbowBtn">Rainbow</button></div>
+          <div class="brush flex"><button id="brushBtn">Brush</button></div>
+          <div class="eraser flex"><button id="eraseBtn">Eraser</button></div>
+          <div class="lighten flex">
+            <button id="lightenBtn">Lighten</button>
+          </div>
+          <div class="shade flex"><button id="shadeBtn">Shade</button></div>
+          <div class="bucket flex"><button id="bucketBtn">Bucket</button></div>
+          <div class="rainbow flex">
+            <button id="rainbowBtn">Rainbow</button>
+          </div>
+          <!-- Color Buttons -->
           <div class="colors">Colors</div>
           <div class="color-select">
-            <input type="color" id="colorpicker" value="#000000" />
+            <p class="color-select-text">Brush Color</p>
+            <input type="color" id="brush-color-picker" value="#000000" />
           </div>
-          <div class="bg-color-select">
-            <input type="color" id="colorpicker" value="#ffffff" />
+          <div class="board-color-select">
+            <p class="color-select-text">Board Color</p>
+            <input type="color" id="board-color-picker" value="#ffffff" />
           </div>
+          <!-- Color Palette -->
           <div class="color-palette">
-            <div class="color-palette-container">
+            <div class="color-palette-container flex">
               <div class="color-palette-option flex" id="color--1"></div>
               <div class="color-palette-option flex" id="color--2"></div>
               <div class="color-palette-option flex" id="color--3"></div>
@@ -50,8 +65,13 @@
               <div class="color-palette-option flex" id="color--10"></div>
               <div class="color-palette-option flex" id="color--11"></div>
               <div class="color-palette-option flex" id="color--12"></div>
+              <div class="color-palette-option flex" id="color--13"></div>
+              <div class="color-palette-option flex" id="color--14"></div>
+              <div class="color-palette-option flex" id="color--15"></div>
+              <div class="color-palette-option flex" id="color--16"></div>
             </div>
           </div>
+          <!-- Settings -->
           <div class="settings">Settings</div>
           <div class="clear">
             <button id="clearBtn">
@@ -71,26 +91,30 @@
               Image
             </button>
           </div>
+          <!-- Reserved for future feature? -->
           <div class="reserved"></div>
 
           <div class="slider flex">
+            <p class="grid-size-number">16x16</p>
             <input
-              id="boardSizeSlider"
+              id="board-size-slider"
               type="range"
               value="16"
               min="16"
               max="64"
               step="8"
             />
+            <p class="grid-size-number">64x64</p>
           </div>
-          <!-- <div class="grid-size flex">Grid Size: 16x16</div> -->
+          <div class="grid-size flex">Grid Size: 16x16</div>
         </div>
       </aside>
-      <div
-        id="drawing-board-container"
-        class="drawingBoard"
-        draggable="false"
-      ></div>
+
+      <!-- Drawing Board -->
+      <div class="drawing-board-container">
+        <div id="drawing-board" class="shadow" draggable="false"></div>
+      </div>
+      <div class="options-container"></div>
     </main>
     <script src="script.js"></script>
   </body>
@@ -100,15 +124,5 @@
 
   https://html2canvas.hertzen.com/
   https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/color
-
-               <button id="colorBtn">Pen Tool</button>
-        <button id="eraseBtn">Eraser</button>
-        <button id="rainbowBtn">Rainbow Tool</button>
-
-        <button id="shadeBtn">Toggle Shade</button>
-        <button id="lightenBtn">Toggle Lighten</button>
-        <button id="clearBtn">Clear Board</button>
-        <button id="saveBtn">Save Image</button>
-        <button id="gridBtn">Toggle Grid</button>
       
 </aside> -->

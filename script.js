@@ -1,6 +1,6 @@
 let gridSize = 16;
 let ink = "#000000";
-const board = document.getElementById("drawing-board-container");
+const board = document.getElementById("drawing-board");
 const clear = document.getElementById("clearBtn");
 const erase = document.getElementById("eraseBtn");
 const gridItem = document.getElementsByClassName("grid-item");
@@ -19,6 +19,10 @@ const colorPaletteArr = [
   "#ffc514",
   "#1eb34f",
   "#b5e619",
+  "#01a4e6",
+  "#9bd9e8",
+  "#3e48d0",
+  "#a14aa3",
 ];
 fillColorPallete();
 // Fill color pallete

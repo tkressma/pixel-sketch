@@ -137,35 +137,53 @@ table {
 :root {
   --grid-cols: 1;
   --grid-rows: 1;
+  --background-color: #3a4454;
+  --options-background-color: #ffffff;
+  --options-text-color: black;
+  --text-color: #3590f3;
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: white;
+  height: 100vh;
   margin: 0;
   font-size: 1.3rem;
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  background: url(background.svg) no-repeat bottom;
+  background-size: cover;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text-color);
 }
 
 /* Begin CSS */
 
+header {
+  margin: 3rem auto 2rem auto;
+  width: 75%;
+}
+
 .title {
-  font-size: 2.5rem;
-  font-weight: 400;
+  font-size: 3.5rem;
+  font-weight: 600;
   letter-spacing: 2px;
-  color: black;
+  color: var(--text-color);
   margin: 1rem 0 0.25rem 0;
   text-align: center;
 }
 
 .slogan {
-  font-size: 0.75rem;
+  font-size: 1.25rem;
   font-weight: 200;
   font-style: italic;
   margin-bottom: 1rem;
 }
 
 .container {
-  width: 80%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -179,18 +197,20 @@ body {
   flex-direction: column;
 }
 
-#options-container {
-  justify-content: flex-start;
-  height: 500px;
-  width: 20%;
+.shadow {
+  box-shadow: -10px 20px 14px 0px rgb(0 0 0 / 75%);
+  -webkit-box-shadow: -10px 20px 14px 0px rgb(0 0 0 / 75%);
+  -moz-box-shadow: -10px 20px 14px 0px rgb(0 0 0 / 75%);
 }
 
-#drawing-board-container {
+/* Drawing Board */
+#drawing-board {
   display: grid;
-  width: 500px;
-  height: 500px;
+  width: 600px;
+  height: 600px;
   border: 2px solid black;
   background-color: white;
+  margin-left: 1rem;
   grid-template-rows: repeat(var(--grid-rows), 1fr);
   grid-template-columns: repeat(var(--grid-cols), 1fr);
   -webkit-user-drag: none;
@@ -198,25 +218,6 @@ body {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-}
-
-button {
-  font-size: 0.75rem;
-  background-color: white;
-  border: 1px solid black;
-  width: 98.5%;
-  padding: 0.25em 0.75em;
-  border-radius: 2.5px;
-  margin: 0.15rem auto;
-  transition: 0.2s all ease-in;
-}
-
-button:hover {
-  background-color: #f3f3f3;
-}
-
-.button--selected {
-  background-color: bisque;
 }
 
 .grid-item {
@@ -232,15 +233,15 @@ button:hover {
   border: none;
 }
 
+/* OPTIONS */
+
 .options {
   display: grid;
-  box-shadow: -5px 5px 10px 0px rgba(0, 0, 0, 0.75);
-  -webkit-box-shadow: -5px 5px 10px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: -5px 5px 10px 0px rgba(0, 0, 0, 0.75);
-  margin-right: 1rem;
+  margin-right: 2rem;
   padding: 1rem;
   border-radius: 10px;
-  background-color: lightblue;
+  border: 2px solid black;
+  background-color: var(--options-background-color);
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto;
   grid-auto-flow: row;
@@ -254,29 +255,62 @@ button:hover {
     "color-palette color-palette"
     "settings settings"
     "clear grid-toggle"
-    "save reserved"
-    "slider slider"
-    "grid-size grid-size";
+    "save slider"
+    "save grid-size";
 }
 
-/* Colors */
+button {
+  font-size: 1.25rem;
+  background-color: white;
+  color: var(--options-text-color);
+  border: 2px solid black;
+  border-radius: 5px;
+  width: 98.5%;
+  padding: 0.25em 0.75em;
+  margin: 0.15rem auto;
+  transition: 0.2s all ease-in;
+}
+
+button:hover {
+  background-color: #dbdbdb;
+}
+
+.button--selected {
+  background-color: bisque;
+}
+
+/* COLORS */
 .colors {
   grid-area: colors;
+  color: var(--options-text-color);
   border-bottom: 1px solid black;
   margin: 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .color-select {
-  margin: 0 0.25rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0.15rem;
   grid-area: color-select;
 }
 
-.bg-color-select {
+.board-color-select {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  align-items: center;
   grid-area: bg-color-select;
+}
+
+.color-select-text {
+  font-size: 1rem;
+  color: var(--options-text-color);
+  text-align: left;
+  padding-right: 0.15rem;
+  margin-left: 0.5rem;
+  margin-right: -0.75rem;
 }
 
 .color-palette {
@@ -292,14 +326,25 @@ button:hover {
 .color-palette-option {
   margin: 0.05rem;
   min-height: 20px;
-  border: 1px solid black;
+  border: 2px solid black;
+}
+
+.board-color-picker {
+  margin-left: 0.15rem;
+}
+
+.brush-color-picker {
+  margin-left: 0.15rem;
 }
 
 /* Tools */
 .tools {
   grid-area: tools;
+  color: var(--options-text-color);
   border-bottom: 1px solid black;
   margin: 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .brush {
@@ -329,8 +374,11 @@ button:hover {
 /* Settings */
 .settings {
   grid-area: settings;
+  color: var(--options-text-color);
   border-bottom: 1px solid black;
   margin: 0.5rem 0;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .clear {
@@ -350,16 +398,27 @@ button:hover {
 }
 
 .slider {
+  margin: 0.5rem 0 -1rem 0;
   font-size: 0.65rem;
   grid-area: slider;
 }
 
 .grid-size {
   font-size: 0.75rem;
+  color: var(--options-text-color);
+  letter-spacing: 1px;
+  font-weight: 800;
   grid-area: grid-size;
+  text-align: center;
 }
 
-@media (max-width: 900px) {
+.grid-size-number {
+  color: var(--options-text-color);
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 975px) {
   .container {
     flex-direction: column;
     width: 100%;
@@ -371,16 +430,13 @@ button:hover {
   }
 
   .options {
-    width: 500px;
+    width: 600px;
     padding: 0.5rem;
     display: grid;
     box-shadow: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    margin-bottom: 1rem;
     margin-right: 0;
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: 1fr 1fr 1fr;
@@ -389,27 +445,47 @@ button:hover {
     grid-template-areas:
       "tools tools tools colors colors colors settings settings settings"
       "pen lighten rainbow color-select color-palette color-palette clear grid-toggle save"
-      "eraser shade bucket bg-color-select color-palette color-palette slider slider slider";
-    /* grid-template-areas:
-      "tools tools"
-      "pen eraser"
-      "lighten shade"
-      "bucket rainbow"
-      "colors colors"
-      "color-select bg-color-select"
-      "color-palette color-palette"
-      "settings settings"
-      "clear grid-toggle"
-      "save reserved"
-      "slider slider"
-      "grid-size grid-size";
-  } */
+      "eraser shade bucket bg-color-select color-palette color-palette grid-size slider slider";
   }
 
   .color-palette-container {
     display: grid;
-    grid-template-columns: repeat(3, 25px);
+    grid-template-columns: repeat(4, 25px);
     grid-template-rows: 4;
+    margin: 0;
+  }
+
+  #drawing-board-container {
+    margin-left: 0;
+  }
+
+  button {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0.05rem;
+  }
+
+  .grid-size-number {
+    display: none;
+  }
+
+  .tools {
+    margin: 0.25 0;
+  }
+
+  .colors {
+    margin: 0.25 0;
+  }
+
+  .settings {
+    margin: 0.25 0;
+  }
+
+  .slider {
+    margin: 0;
+  }
+
+  .color-select {
     margin: 0;
   }
 }
