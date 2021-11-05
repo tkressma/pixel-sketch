@@ -276,7 +276,7 @@ button:hover {
 }
 
 .button--selected {
-  background-color: bisque;
+  background-color: #3591f38a;
 }
 
 /* COLORS */
@@ -314,11 +314,8 @@ button:hover {
 }
 
 .color-palette {
-  grid-area: color-palette;
-}
-
-.color-palette-container {
   display: grid;
+  grid-area: color-palette;
   grid-template-columns: repeat(4, 1fr);
   margin: 0.5rem 0;
 }

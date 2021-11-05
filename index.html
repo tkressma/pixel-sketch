@@ -30,7 +30,9 @@
         <div class="options shadow">
           <!-- Tool Buttons -->
           <div class="tools">Tools</div>
-          <div class="brush flex"><button id="brushBtn">Brush</button></div>
+          <div class="brush flex">
+            <button class="button--selected" id="brushBtn">Brush</button>
+          </div>
           <div class="eraser flex"><button id="eraseBtn">Eraser</button></div>
           <div class="lighten flex">
             <button id="lightenBtn">Lighten</button>
@@ -51,26 +53,7 @@
             <input type="color" id="board-color-picker" value="#ffffff" />
           </div>
           <!-- Color Palette -->
-          <div class="color-palette">
-            <div class="color-palette-container flex">
-              <div class="color-palette-option flex" id="color--1"></div>
-              <div class="color-palette-option flex" id="color--2"></div>
-              <div class="color-palette-option flex" id="color--3"></div>
-              <div class="color-palette-option flex" id="color--4"></div>
-              <div class="color-palette-option flex" id="color--5"></div>
-              <div class="color-palette-option flex" id="color--6"></div>
-              <div class="color-palette-option flex" id="color--7"></div>
-              <div class="color-palette-option flex" id="color--8"></div>
-              <div class="color-palette-option flex" id="color--9"></div>
-              <div class="color-palette-option flex" id="color--10"></div>
-              <div class="color-palette-option flex" id="color--11"></div>
-              <div class="color-palette-option flex" id="color--12"></div>
-              <div class="color-palette-option flex" id="color--13"></div>
-              <div class="color-palette-option flex" id="color--14"></div>
-              <div class="color-palette-option flex" id="color--15"></div>
-              <div class="color-palette-option flex" id="color--16"></div>
-            </div>
-          </div>
+          <div class="color-palette flex" id="color-palette-container"></div>
           <!-- Settings -->
           <div class="settings">Settings</div>
           <div class="clear">

@@ -1,11 +1,24 @@
+"use strict";
+
+// Drawing Board Vars
 let gridSize = 16;
-let ink = "#000000";
 const board = document.getElementById("drawing-board");
-const clear = document.getElementById("clearBtn");
-const erase = document.getElementById("eraseBtn");
 const gridItem = document.getElementsByClassName("grid-item");
-const grid = document.getElementById("gridBtn");
-const colorPalette = document.getElementsByClassName("color-palette-option");
+
+// Tools Vars
+let ink = "#000000";
+let backgroundColor = "#ffffff";
+const brush = document.getElementById("brushBtn");
+const erase = document.getElementById("eraseBtn");
+const lighten = document.getElementById("lightenBtn");
+const shade = document.getElementById("shadeBtn");
+const bucket = document.getElementById("bucketBtn");
+const rainbow = document.getElementById("rainbowBtn");
+
+// Color Palette Vars
+const colorPaletteContainer = document.getElementById(
+  "color-palette-container"
+);
 const colorPaletteArr = [
   "#000000",
   "#ffffff",
@@ -24,33 +37,15 @@ const colorPaletteArr = [
   "#3e48d0",
   "#a14aa3",
 ];
-fillColorPallete();
-// Fill color pallete
-function fillColorPallete() {
-  for (let i = 1; i <= colorPalette.length; i++) {
-    let currentColor = document.getElementById(`color--${i}`);
-    currentColor.style.background = colorPaletteArr[i - 1];
-  }
-}
 
-grid.addEventListener("click", toggleGrid, false);
-clear.addEventListener("click", clearBoard, false);
-erase.addEventListener("click", toggleEraser, false);
+// Settings Vars
+const clear = document.getElementById("clearBtn");
+const gridToggle = document.getElementById("gridBtn");
+const save = document.getElementById("saveBtn");
+const slider = document.getElementById("board-size-slider");
+
+// Make the drawing board grid
 makeGrid(gridSize);
-
-function toggleGrid() {
-  Array.from(gridItem).forEach((element) =>
-    element.classList.toggle("grid-item--nogrid")
-  );
-}
-
-let toggle = true;
-let eraser = false;
-
-function toggleEraser() {
-  eraser = !eraser;
-}
-
 function makeGrid(size) {
   board.style.setProperty("--grid-rows", size);
   board.style.setProperty("--grid-cols", size);
@@ -63,19 +58,67 @@ function makeGrid(size) {
   }
 }
 
-Array.from(gridItem).forEach((v) =>
-  v.addEventListener("mousedown", mouseDown, false)
-);
+// Fill color pallete
+fillColorPallete();
+function fillColorPallete() {
+  for (let i = 1; i <= 16; i++) {
+    // Dyamically generate all color palette options
+    let colorPaletteOption = document.createElement("div");
+    colorPaletteOption.classList.add("color-palette-option", "flex");
+    colorPaletteOption.setAttribute("id", `color--${i}`);
+    colorPaletteContainer.appendChild(colorPaletteOption);
 
-Array.from(gridItem).forEach((v) =>
-  v.addEventListener(
+    // Assign each color palette option a color.
+    let currentColor = document.getElementById(`color--${i}`);
+    currentColor.style.background = colorPaletteArr[i - 1];
+  }
+}
+
+// Toggle Grid
+let toggle = true;
+gridToggle.addEventListener("click", toggleGrid);
+function toggleGrid() {
+  Array.from(gridItem).forEach((element) =>
+    element.classList.toggle("grid-item--nogrid")
+  );
+}
+
+// Clear Board
+clear.addEventListener("click", clearBoard);
+function clearBoard() {
+  Array.from(gridItem).forEach(
+    (item) => (item.style.background = backgroundColor)
+  );
+}
+
+// Brush and Eraser
+erase.addEventListener("click", toggleEraser);
+brush.addEventListener("click", toggleBrush);
+let eraser = false;
+
+function toggleEraser() {
+  eraser = true;
+  switchSelectedButton(brush, erase);
+}
+
+function toggleBrush() {
+  eraser = false;
+  switchSelectedButton(erase, brush);
+}
+
+function switchSelectedButton(a, b) {
+  a.classList.remove("button--selected");
+  b.classList.add("button--selected");
+}
+
+// Allows the user to color single grid items by clicking once.
+Array.from(gridItem).forEach((item) =>
+  item.addEventListener(
     "click",
     () => {
-      if (eraser === false) {
-        v.style.background = "black";
-      } else {
-        v.style.background = "white";
-      }
+      eraser === false
+        ? (item.style.background = ink)
+        : (item.style.background = backgroundColor);
     },
     false
   )
@@ -83,26 +126,26 @@ Array.from(gridItem).forEach((v) =>
 
 // If a person is drawing, continue listening for a mouse release.
 // If released, toggle drawing.
+
+Array.from(gridItem).forEach((item) =>
+  item.addEventListener("mousedown", draw)
+);
+
 document.body.addEventListener("mouseup", mouseUp, false);
 function mouseUp() {
   toggle = false;
 }
 
-function mouseDown() {
+function draw() {
   toggle = true;
-
-  Array.from(gridItem).forEach((v) =>
-    v.addEventListener("mousemove", function () {
+  Array.from(gridItem).forEach((item) =>
+    item.addEventListener("mousemove", function () {
       if (toggle && eraser === false) {
         console.log("Starting");
-        v.style.background = "black";
+        item.style.background = "black";
       } else if (toggle && eraser === true) {
-        v.style.background = "white";
+        item.style.background = "white";
       }
     })
   );
-}
-
-function clearBoard() {
-  Array.from(gridItem).forEach((v) => (v.style.background = "white"));
 }
