@@ -314,14 +314,21 @@ button:hover {
   text-align: left;
   padding-right: 0.15rem;
   margin-left: 0.5rem;
-  margin-right: -0.75rem;
+}
+
+.color-select > .color-select-text:first-child {
+  margin-left: 0;
+}
+
+.board-color-select > input[type="color" i] {
+  margin-right: 0;
 }
 
 .color-palette {
   display: grid;
   grid-area: color-palette;
   grid-template-columns: repeat(4, 1fr);
-  margin: 0.5rem 0;
+  margin: 0.5rem 0.25rem;
 }
 
 .color-palette-option {
@@ -330,11 +337,13 @@ button:hover {
   border: 2px solid black;
 }
 
-.board-color-picker {
+input[type="color" i] {
+  margin-right: 0.5rem;
   margin-left: 0.15rem;
 }
 
 .brush-color-picker {
+  margin-right: 0.5rem;
   margin-left: 0.15rem;
 }
 
@@ -413,18 +422,6 @@ button:hover {
   text-align: center;
 }
 
-.grid-size-min {
-  color: var(--options-text-color);
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-.grid-size-max {
-  color: var(--options-text-color);
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
 @media (max-width: 975px) {
   .container {
     flex-direction: column;
@@ -438,7 +435,7 @@ button:hover {
 
   .options {
     width: 600px;
-    padding: 0.5rem 0.025rem;
+    padding: 0.5rem 0.25rem;
     display: grid;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -456,6 +453,14 @@ button:hover {
       "eraser shade bucket bg-color-select color-palette color-palette grid-size grid-size grid-size";
   }
 
+  .color-palette {
+    margin: 0rem 0.25rem;
+  }
+
+  input[type="color" i] {
+    margin-left: -0.5rem;
+  }
+
   .color-palette-container {
     display: grid;
     grid-template-columns: repeat(4, 25px);
@@ -463,7 +468,7 @@ button:hover {
     margin: 0;
   }
 
-  #drawing-board-container {
+  #drawing-board {
     margin-left: 0;
   }
 
@@ -475,14 +480,6 @@ button:hover {
 
   .grid-size {
     margin-top: -1rem;
-  }
-
-  .grid-size-min {
-    display: none;
-  }
-
-  .grid-size-max {
-    display: none;
   }
 
   .tools {
@@ -503,5 +500,13 @@ button:hover {
 
   .color-select {
     margin: 0;
+  }
+
+  .color-select > .color-select-text:first-child {
+    margin-left: 0.5rem;
+  }
+
+  .board-color-select > input[type="color" i] {
+    margin-right: 0.5rem;
   }
 }
