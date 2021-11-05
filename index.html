@@ -30,16 +30,22 @@
         <div class="options shadow">
           <!-- Tool Buttons -->
           <div class="tools">Tools</div>
-          <div class="brush flex">
+          <div class="brush flex stretch">
             <button class="button--selected" id="brushBtn">Brush</button>
           </div>
-          <div class="eraser flex"><button id="eraseBtn">Eraser</button></div>
-          <div class="lighten flex">
+          <div class="eraser flex stretch">
+            <button id="eraseBtn">Eraser</button>
+          </div>
+          <div class="lighten flex stretch">
             <button id="lightenBtn">Lighten</button>
           </div>
-          <div class="shade flex"><button id="shadeBtn">Shade</button></div>
-          <div class="bucket flex"><button id="bucketBtn">Bucket</button></div>
-          <div class="rainbow flex">
+          <div class="shade flex stretch">
+            <button id="shadeBtn">Shade</button>
+          </div>
+          <div class="bucket flex stretch">
+            <button id="bucketBtn">Bucket</button>
+          </div>
+          <div class="rainbow flex stretch">
             <button id="rainbowBtn">Rainbow</button>
           </div>
           <!-- Color Buttons -->
@@ -56,29 +62,27 @@
           <div class="color-palette flex" id="color-palette-container"></div>
           <!-- Settings -->
           <div class="settings">Settings</div>
-          <div class="clear">
+          <div class="clear flex stretch">
             <button id="clearBtn">
               Clear<br />
               Board
             </button>
           </div>
-          <div class="grid-toggle">
+          <div class="grid-toggle flex stretch">
             <button id="gridBtn">
               Toggle <br />
               Grid
             </button>
           </div>
-          <div class="save">
+          <div class="save flex stretch">
             <button id="saveBtn">
               Save<br />
               Image
             </button>
           </div>
-          <!-- Reserved for future feature? -->
-          <div class="reserved"></div>
 
-          <div class="slider flex">
-            <p class="grid-size-number">16x16</p>
+          <div class="slider flex stretch">
+            <p class="grid-size-min">16x16</p>
             <input
               id="board-size-slider"
               type="range"
@@ -87,9 +91,11 @@
               max="64"
               step="8"
             />
-            <p class="grid-size-number">64x64</p>
+            <p class="grid-size-max">64x64</p>
           </div>
-          <div class="grid-size flex">Grid Size: 16x16</div>
+          <div class="grid-size flex">
+            Grid Size: <span id="grid-size-number">16x16</span>
+          </div>
         </div>
       </aside>
 

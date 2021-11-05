@@ -197,6 +197,10 @@ header {
   flex-direction: column;
 }
 
+.stretch {
+  align-items: stretch;
+}
+
 .shadow {
   box-shadow: -10px 20px 14px 0px rgb(0 0 0 / 75%);
   -webkit-box-shadow: -10px 20px 14px 0px rgb(0 0 0 / 75%);
@@ -409,7 +413,13 @@ button:hover {
   text-align: center;
 }
 
-.grid-size-number {
+.grid-size-min {
+  color: var(--options-text-color);
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.grid-size-max {
   color: var(--options-text-color);
   font-weight: 800;
   letter-spacing: 1px;
@@ -428,7 +438,7 @@ button:hover {
 
   .options {
     width: 600px;
-    padding: 0.5rem;
+    padding: 0.5rem 0.025rem;
     display: grid;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -436,13 +446,14 @@ button:hover {
     margin-bottom: 1rem;
     margin-right: 0;
     grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 5px;
     margin-top: 0rem;
     grid-auto-flow: row;
     grid-template-areas:
       "tools tools tools colors colors colors settings settings settings"
       "pen lighten rainbow color-select color-palette color-palette clear grid-toggle save"
-      "eraser shade bucket bg-color-select color-palette color-palette grid-size slider slider";
+      "eraser shade bucket bg-color-select color-palette color-palette slider slider slider"
+      "eraser shade bucket bg-color-select color-palette color-palette grid-size grid-size grid-size";
   }
 
   .color-palette-container {
@@ -462,7 +473,15 @@ button:hover {
     margin: 0.05rem;
   }
 
-  .grid-size-number {
+  .grid-size {
+    margin-top: -1rem;
+  }
+
+  .grid-size-min {
+    display: none;
+  }
+
+  .grid-size-max {
     display: none;
   }
 

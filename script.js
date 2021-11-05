@@ -43,6 +43,7 @@ const clear = document.getElementById("clearBtn");
 const gridToggle = document.getElementById("gridBtn");
 const save = document.getElementById("saveBtn");
 const slider = document.getElementById("board-size-slider");
+const sliderSizeNumber = document.getElementById("grid-size-number");
 
 // Make the drawing board grid
 makeGrid(gridSize);
@@ -55,6 +56,15 @@ function makeGrid(size) {
     gridElement.classList.add("grid-item");
     gridElement.setAttribute("draggable", "false");
     board.appendChild(gridElement);
+  }
+
+  initializeDrawing();
+}
+
+// Remove all board elements in order to resize the board
+function clearBoardElements(board) {
+  while (board.firstChild) {
+    board.removeChild(board.firstChild);
   }
 }
 
@@ -91,6 +101,14 @@ function clearBoard() {
   );
 }
 
+// Grid Size Slider
+slider.oninput = () => {
+  gridSize = slider.value;
+  sliderSizeNumber.innerHTML = `${gridSize}x${gridSize}`;
+  clearBoardElements(board);
+  makeGrid(gridSize);
+};
+
 // Brush and Eraser
 erase.addEventListener("click", toggleEraser);
 brush.addEventListener("click", toggleBrush);
@@ -111,41 +129,43 @@ function switchSelectedButton(a, b) {
   b.classList.add("button--selected");
 }
 
-// Allows the user to color single grid items by clicking once.
-Array.from(gridItem).forEach((item) =>
-  item.addEventListener(
-    "click",
-    () => {
-      eraser === false
-        ? (item.style.background = ink)
-        : (item.style.background = backgroundColor);
-    },
-    false
-  )
-);
-
-// If a person is drawing, continue listening for a mouse release.
-// If released, toggle drawing.
-
-Array.from(gridItem).forEach((item) =>
-  item.addEventListener("mousedown", draw)
-);
-
-document.body.addEventListener("mouseup", mouseUp, false);
-function mouseUp() {
-  toggle = false;
-}
-
-function draw() {
-  toggle = true;
+function initializeDrawing() {
+  // Allows the user to color single grid items by clicking once.
   Array.from(gridItem).forEach((item) =>
-    item.addEventListener("mousemove", function () {
-      if (toggle && eraser === false) {
-        console.log("Starting");
-        item.style.background = "black";
-      } else if (toggle && eraser === true) {
-        item.style.background = "white";
-      }
-    })
+    item.addEventListener(
+      "click",
+      () => {
+        eraser === false
+          ? (item.style.background = ink)
+          : (item.style.background = backgroundColor);
+      },
+      false
+    )
   );
+
+  // If a person is drawing, continue listening for a mouse release.
+  // If released, toggle drawing.
+  Array.from(gridItem).forEach((item) =>
+    item.addEventListener("mousedown", draw)
+  );
+
+  // Listens for when the user releases the mouse to know when to stop drawing.
+  document.body.addEventListener("mouseup", mouseUp, false);
+  function mouseUp() {
+    toggle = false;
+  }
+
+  function draw() {
+    toggle = true;
+    Array.from(gridItem).forEach((item) =>
+      item.addEventListener("mousemove", function () {
+        if (toggle && eraser === false) {
+          console.log("Starting");
+          item.style.background = "black";
+        } else if (toggle && eraser === true) {
+          item.style.background = "white";
+        }
+      })
+    );
+  }
 }
