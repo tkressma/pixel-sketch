@@ -8,12 +8,24 @@ const gridItem = document.getElementsByClassName("grid-item");
 // Tools Vars
 let ink = "#000000";
 let backgroundColor = "#ffffff";
-const brush = document.getElementById("brushBtn");
-const erase = document.getElementById("eraseBtn");
-const lighten = document.getElementById("lightenBtn");
-const shade = document.getElementById("shadeBtn");
-const bucket = document.getElementById("bucketBtn");
-const rainbow = document.getElementById("rainbowBtn");
+let brush = true;
+let eraser = false;
+let shading = false;
+let lighten = false;
+const brushBtn = document.getElementById("brushBtn");
+const eraseBtn = document.getElementById("eraseBtn");
+const lightenBtn = document.getElementById("lightenBtn");
+const shadeBtn = document.getElementById("shadeBtn");
+const bucketBtn = document.getElementById("bucketBtn");
+const rainbowBtn = document.getElementById("rainbowBtn");
+
+// Used when switching between tools
+function resetTools() {
+  brush = false;
+  eraser = false;
+  shading = false;
+  lighten = false;
+}
 
 // Color Picker/Palette Vars
 const brushColor = document.getElementById("brush-color-picker");
@@ -56,7 +68,6 @@ function makeGrid(size) {
   for (let i = 0; i < size * size; i++) {
     let gridElement = document.createElement("div");
     gridElement.classList.add("grid-item");
-    gridElement.setAttribute("draggable", false);
     gridElement.setAttribute("data-inked", false);
     board.appendChild(gridElement);
   }
@@ -99,9 +110,10 @@ function toggleGrid() {
 // Clear Board
 clear.addEventListener("click", clearBoard);
 function clearBoard() {
-  Array.from(gridItem).forEach(
-    (item) => (item.style.background = backgroundColor)
-  );
+  Array.from(gridItem).forEach((item) => {
+    item.style.background = backgroundColor;
+    item.setAttribute("data-inked", false);
+  });
 }
 
 // Grid Size Slider
@@ -112,20 +124,17 @@ slider.oninput = () => {
   makeGrid(gridSize);
 };
 
-// Brush and Eraser
-erase.addEventListener("click", toggleEraser);
-brush.addEventListener("click", toggleBrush);
-let eraser = false;
-
-function toggleEraser() {
+// Brush and Eraser Tools
+eraseBtn.addEventListener("click", () => {
+  resetTools();
   eraser = true;
-  switchSelectedButton(brush, erase);
-}
-
-function toggleBrush() {
-  eraser = false;
-  switchSelectedButton(erase, brush);
-}
+  switchSelectedButton(eraseBtn);
+});
+brushBtn.addEventListener("click", () => {
+  resetTools();
+  brush = true;
+  switchSelectedButton(brushBtn);
+});
 
 // Brush Color Picker
 brushColor.oninput = () => {
@@ -140,27 +149,40 @@ boardColor.oninput = () => {
   });
 };
 
-function switchSelectedButton(a, b) {
-  a.classList.remove("button--selected");
-  b.classList.add("button--selected");
+// Shade Tool
+shadeBtn.addEventListener("click", () => {
+  switchSelectedButton(shadeBtn);
+  resetTools();
+  shading = true;
+});
+
+function switchSelectedButton(selectedButton) {
+  let currentSelection = document.getElementsByClassName("button--selected")[0];
+  currentSelection.classList.remove("button--selected");
+  selectedButton.classList.add("button--selected");
+}
+
+function shadeTool(item) {
+  let currentColor = item.style.background;
+  let rgb = currentColor.match(/\d+/g);
+  let [r, g, b] = rgb;
+  item.style.background = `rgb(${r * 0.95}, ${g * 0.95}, ${b * 0.95})`;
 }
 
 function initializeDrawing() {
   // Allows the user to color single grid items by clicking once.
   Array.from(gridItem).forEach((item) =>
-    item.addEventListener(
-      "click",
-      () => {
-        if (eraser === false) {
-          item.style.background = ink;
-          item.setAttribute("data-inked", true);
-        } else {
-          item.style.background = backgroundColor;
-          item.setAttribute("data-inked", false);
-        }
-      },
-      false
-    )
+    item.addEventListener("click", () => {
+      if (brush) {
+        item.style.background = ink;
+        item.setAttribute("data-inked", true);
+      } else if (eraser) {
+        item.style.background = backgroundColor;
+        item.setAttribute("data-inked", false);
+      } else if (shading) {
+        shadeTool(item);
+      }
+    })
   );
 
   // If a person is drawing, continue listening for a mouse release.
@@ -178,13 +200,17 @@ function initializeDrawing() {
   function draw() {
     toggle = true;
     Array.from(gridItem).forEach((item) =>
-      item.addEventListener("mousemove", function () {
-        if (toggle && !eraser) {
-          item.style.background = ink;
-          item.setAttribute("data-inked", true);
-        } else if (toggle && eraser) {
-          item.style.background = backgroundColor;
-          item.setAttribute("data-inked", false);
+      item.addEventListener("mouseenter", function () {
+        if (toggle) {
+          if (brush) {
+            item.style.background = ink;
+            item.setAttribute("data-inked", true);
+          } else if (eraser) {
+            item.style.background = backgroundColor;
+            item.setAttribute("data-inked", false);
+          } else if (shading) {
+            shadeTool(item);
+          }
         }
       })
     );
