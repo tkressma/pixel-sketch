@@ -15,7 +15,9 @@ const shade = document.getElementById("shadeBtn");
 const bucket = document.getElementById("bucketBtn");
 const rainbow = document.getElementById("rainbowBtn");
 
-// Color Palette Vars
+// Color Picker/Palette Vars
+const brushColor = document.getElementById("brush-color-picker");
+const boardColor = document.getElementById("board-color-picker");
 const colorPaletteContainer = document.getElementById(
   "color-palette-container"
 );
@@ -54,7 +56,8 @@ function makeGrid(size) {
   for (let i = 0; i < size * size; i++) {
     let gridElement = document.createElement("div");
     gridElement.classList.add("grid-item");
-    gridElement.setAttribute("draggable", "false");
+    gridElement.setAttribute("draggable", false);
+    gridElement.setAttribute("data-inked", false);
     board.appendChild(gridElement);
   }
 
@@ -88,8 +91,8 @@ function fillColorPallete() {
 let toggle = true;
 gridToggle.addEventListener("click", toggleGrid);
 function toggleGrid() {
-  Array.from(gridItem).forEach((element) =>
-    element.classList.toggle("grid-item--nogrid")
+  Array.from(gridItem).forEach((item) =>
+    item.classList.toggle("grid-item--nogrid")
   );
 }
 
@@ -124,6 +127,19 @@ function toggleBrush() {
   switchSelectedButton(erase, brush);
 }
 
+// Brush Color Picker
+brushColor.oninput = () => {
+  ink = brushColor.value;
+};
+
+// Background Color Picker
+boardColor.oninput = () => {
+  backgroundColor = boardColor.value;
+  document.querySelectorAll('[data-inked="false"]').forEach((item) => {
+    item.style.background = backgroundColor;
+  });
+};
+
 function switchSelectedButton(a, b) {
   a.classList.remove("button--selected");
   b.classList.add("button--selected");
@@ -135,9 +151,13 @@ function initializeDrawing() {
     item.addEventListener(
       "click",
       () => {
-        eraser === false
-          ? (item.style.background = ink)
-          : (item.style.background = backgroundColor);
+        if (eraser === false) {
+          item.style.background = ink;
+          item.setAttribute("data-inked", true);
+        } else {
+          item.style.background = backgroundColor;
+          item.setAttribute("data-inked", false);
+        }
       },
       false
     )
@@ -159,11 +179,12 @@ function initializeDrawing() {
     toggle = true;
     Array.from(gridItem).forEach((item) =>
       item.addEventListener("mousemove", function () {
-        if (toggle && eraser === false) {
-          console.log("Starting");
-          item.style.background = "black";
-        } else if (toggle && eraser === true) {
-          item.style.background = "white";
+        if (toggle && !eraser) {
+          item.style.background = ink;
+          item.setAttribute("data-inked", true);
+        } else if (toggle && eraser) {
+          item.style.background = backgroundColor;
+          item.setAttribute("data-inked", false);
         }
       })
     );
