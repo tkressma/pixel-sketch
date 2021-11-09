@@ -151,7 +151,7 @@ slider.oninput = () => {
   gridSize = slider.value;
   sliderSizeNumber.innerHTML = `${gridSize}x${gridSize}`;
   clearBoardElements(board);
-  makeGrid(gridSize);
+  initDrawingBoard(gridSize);
 };
 
 // Remove all board elements in order to resize the board
