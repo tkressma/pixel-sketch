@@ -192,13 +192,10 @@ function shadeTool(item, shadeValue) {
   if (currentColor === "transparent") currentColor = background;
 
   let rgb = currentColor.match(/\d+/g);
-  let [r, g, b] = rgb;
-  r = Number(r);
-  g = Number(g);
-  b = Number(b);
+  let [r, g, b] = convertValues(rgb);
 
   // Gradually increase towards darker rgb values.
-  item.style.background = `rgb(${r - 10}, ${g - 10}, ${b - 10}`;
+  setRGBBackground(item, "shade", r, g, b);
 }
 
 // Lighten tool
@@ -217,13 +214,10 @@ function lightenTool(item, shadeValue) {
   if (currentColor === "transparent") currentColor = background;
 
   let rgb = currentColor.match(/\d+/g);
-  let [r, g, b] = rgb;
-  r = Number(r);
-  g = Number(g);
-  b = Number(b);
+  let [r, g, b] = convertValues(rgb);
 
   // Gradually increase towards darker rgb values.
-  item.style.background = `rgb(${r + 10}, ${g + 10}, ${b + 10}`;
+  setRGBBackground(item, "lighten", r, g, b);
 }
 
 /* ============= */
@@ -237,8 +231,9 @@ brushColor.oninput = () => {
 
 // Background Color Picker
 boardColor.oninput = () => {
-  let color = hexToRgb(boardColor.value);
-  let [r, g, b] = [color.r, color.g, color.b];
+  let inputColor = hexToRgb(boardColor.value);
+  let { r, g, b } = inputColor;
+
   background = `rgb(${r},${g},${b})`;
   board.style.background = background;
 
@@ -257,28 +252,22 @@ boardColor.oninput = () => {
 // This function ensures the shaded/lightenend areas maintain their values.
 function adjustShade(item, shade, bg) {
   let rgb = bg.match(/\d+/g);
-  let [r, g, b] = rgb;
-  r = Number(r);
-  g = Number(g);
-  b = Number(b);
+  let [r, g, b] = convertValues(rgb);
 
   if (shade > 0) {
-    console.log(item.style.background);
     for (let i = 0; i < shade; i++) {
       r -= 10;
       g -= 10;
       b -= 10;
     }
-    item.style.background = `rgb(${r}, ${g}, ${b}`;
+    setRGBBackground(item, "adjust", r, g, b);
   } else if (shade < 0) {
-    console.log("yes");
     for (let i = 0; i > shade; i--) {
       r += 10;
       g += 10;
       b += 10;
     }
-    console.log(r);
-    item.style.background = `rgb(${r}, ${g}, ${b}`;
+    setRGBBackground(item, "adjust", r, g, b);
   }
 }
 
@@ -318,6 +307,29 @@ function hexToRgb(hex) {
     : null;
 }
 
-// TODO:
-// 1) Refractor Code
-// 2) Fix bug when data-shade
+// Converts strings into number values to be used in the rgb color code
+function convertValues(rgb) {
+  let r = Number(rgb[0]);
+  let g = Number(rgb[1]);
+  let b = Number(rgb[2]);
+  return [r, g, b];
+}
+
+// Determines the background color based on the operation
+function setRGBBackground(item, operation, r, g, b) {
+  if (item.getAttribute("data-shade") == 0) {
+    item.style.background = "transparent";
+  } else {
+    switch (operation) {
+      case "adjust":
+        item.style.background = `rgb(${r}, ${g}, ${b}`;
+        break;
+      case "shade":
+        item.style.background = `rgb(${r - 10}, ${g - 10}, ${b - 10}`;
+        break;
+      case "lighten":
+        item.style.background = `rgb(${r + 10}, ${g + 10}, ${b + 10}`;
+        break;
+    }
+  }
+}
