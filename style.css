@@ -226,6 +226,7 @@ header {
 
 .grid-item {
   border: 1px solid rgba(0, 0, 0, 0.5);
+  cursor: crosshair;
   -webkit-user-drag: none;
   user-select: none;
   -moz-user-select: none;
