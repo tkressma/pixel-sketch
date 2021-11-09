@@ -114,10 +114,8 @@ Array.from(gridItem).forEach((item) =>
           item.setAttribute("data-shade", 0);
         } else if (shading) {
           shadeTool(item, item.getAttribute("data-shade"));
-          item.setAttribute("data-inked", true);
         } else if (lighten) {
           lightenTool(item, item.getAttribute("data-shade"));
-          item.setAttribute("data-inked", true);
         }
       }
     })
@@ -245,7 +243,7 @@ boardColor.oninput = () => {
   board.style.background = background;
 
   for (let i = 0; i < gridItem.length; i++) {
-    if (gridItem[i].dataset.shade != 0) {
+    if (gridItem[i].dataset.shade != 0 && gridItem[i].dataset.inked != "true") {
       gridItem[i].style.background = background;
       adjustShade(
         gridItem[i],
