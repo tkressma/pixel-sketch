@@ -64,6 +64,10 @@ const save = document.getElementById("saveBtn");
 const slider = document.getElementById("board-size-slider");
 const sliderSizeNumber = document.getElementById("grid-size-number");
 
+/* =============================== */
+/* Board and Drawing Functionality */
+/* =============================== */
+
 // Initializes the drawing board by generating a board of X by Y "pixels".
 makeGrid(gridSize);
 function makeGrid(size) {
@@ -78,49 +82,45 @@ function makeGrid(size) {
     gridElement.setAttribute("data-shade", 0);
     board.appendChild(gridElement);
   }
-}
 
-/* ===================== */
-/* Drawing Functionality */
-/* ===================== */
+  // If a user is holding their mouse down, continue to allow the user to draw.
+  Array.from(gridItem).forEach((item) =>
+    item.addEventListener("mousedown", draw)
+  );
 
-// If a user is holding their mouse down, continue to allow the user to draw.
-Array.from(gridItem).forEach((item) =>
-  item.addEventListener("mousedown", draw)
-);
+  function draw() {
+    toggle = true;
+  }
 
-function draw() {
-  toggle = true;
-}
+  // Listens for when the user releases the mouse, disallowing the user to draw.
+  document.body.addEventListener("mouseup", stopDrawing, false);
+  function stopDrawing() {
+    toggle = false;
+  }
 
-// Listens for when the user releases the mouse, disallowing the user to draw.
-document.body.addEventListener("mouseup", stopDrawing, false);
-function stopDrawing() {
-  toggle = false;
-}
-
-// Allows the user to either color individual grid items or click and drag to draw.
-Array.from(gridItem).forEach((item) =>
-  ["mousedown", "mouseenter"].forEach((e) =>
-    item.addEventListener(e, () => {
-      if (toggle) {
-        if (brush) {
-          item.style.background = ink;
-          item.setAttribute("data-inked", true);
-          item.setAttribute("data-shade", 0);
-        } else if (eraser) {
-          item.style.background = "transparent";
-          item.setAttribute("data-inked", false);
-          item.setAttribute("data-shade", 0);
-        } else if (shading) {
-          shadeTool(item, item.getAttribute("data-shade"));
-        } else if (lighten) {
-          lightenTool(item, item.getAttribute("data-shade"));
+  // Allows the user to either color individual grid items or click and drag to draw.
+  Array.from(gridItem).forEach((item) =>
+    ["mousedown", "mouseenter"].forEach((e) =>
+      item.addEventListener(e, () => {
+        if (toggle) {
+          if (brush) {
+            item.style.background = ink;
+            item.setAttribute("data-inked", true);
+            item.setAttribute("data-shade", 0);
+          } else if (eraser) {
+            item.style.background = "transparent";
+            item.setAttribute("data-inked", false);
+            item.setAttribute("data-shade", 0);
+          } else if (shading) {
+            shadeTool(item, item.getAttribute("data-shade"));
+          } else if (lighten) {
+            lightenTool(item, item.getAttribute("data-shade"));
+          }
         }
-      }
-    })
-  )
-);
+      })
+    )
+  );
+}
 
 /* ===================== */
 /* Setting functionality */
