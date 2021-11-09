@@ -84,7 +84,7 @@ function makeGrid(size) {
 /* Drawing Functionality */
 /* ===================== */
 
-// If a person is drawing, continue listening for a mouse release.
+// If a user is holding their mouse down, continue to allow the user to draw.
 Array.from(gridItem).forEach((item) =>
   item.addEventListener("mousedown", draw)
 );
@@ -93,55 +93,35 @@ function draw() {
   toggle = true;
 }
 
-// Listens for when the user releases the mouse to know when to stop drawing.
+// Listens for when the user releases the mouse, disallowing the user to draw.
 document.body.addEventListener("mouseup", stopDrawing, false);
-
 function stopDrawing() {
   toggle = false;
 }
 
-// Allows the user to color single grid items by clicking once.
+// Allows the user to either color individual grid items or click and drag to draw.
 Array.from(gridItem).forEach((item) =>
-  item.addEventListener("mousedown", () => {
-    if (brush) {
-      item.style.background = ink;
-      item.setAttribute("data-inked", true);
-      item.setAttribute("data-shade", 0);
-    } else if (eraser) {
-      item.style.background = backgroundColor;
-      item.setAttribute("data-inked", false);
-      item.setAttribute("data-shade", 0);
-    } else if (shading) {
-      shadeTool(item, item.getAttribute("data-shade"));
-      item.setAttribute("data-inked", true);
-    } else if (lighten) {
-      lightenTool(item, item.getAttribute("data-shade"));
-      item.setAttribute("data-inked", true);
-    }
-  })
-);
-
-// Allows the user to color by clicking and dragging around the drawing board.
-Array.from(gridItem).forEach((item) =>
-  item.addEventListener("mouseenter", function () {
-    if (toggle) {
-      if (brush) {
-        item.style.background = ink;
-        item.setAttribute("data-inked", true);
-        item.setAttribute("data-shade", 0);
-      } else if (eraser) {
-        item.style.background = backgroundColor;
-        item.setAttribute("data-inked", false);
-        item.setAttribute("data-shade", 0);
-      } else if (shading) {
-        shadeTool(item, item.getAttribute("data-shade"));
-        item.setAttribute("data-inked", true);
-      } else if (lighten) {
-        lightenTool(item, item.getAttribute("data-shade"));
-        item.setAttribute("data-inked", true);
+  ["mousedown", "mouseenter"].forEach((e) =>
+    item.addEventListener(e, () => {
+      if (toggle) {
+        if (brush) {
+          item.style.background = ink;
+          item.setAttribute("data-inked", true);
+          item.setAttribute("data-shade", 0);
+        } else if (eraser) {
+          item.style.background = background;
+          item.setAttribute("data-inked", false);
+          item.setAttribute("data-shade", 0);
+        } else if (shading) {
+          shadeTool(item, item.getAttribute("data-shade"));
+          item.setAttribute("data-inked", true);
+        } else if (lighten) {
+          lightenTool(item, item.getAttribute("data-shade"));
+          item.setAttribute("data-inked", true);
+        }
       }
-    }
-  })
+    })
+  )
 );
 
 /* ===================== */
@@ -155,6 +135,7 @@ function clearBoard() {
   Array.from(gridItem).forEach((item) => {
     item.style.background = "transparent";
     item.setAttribute("data-inked", false);
+    item.setAttribute("data-shade", 0);
   });
 }
 
@@ -271,6 +252,8 @@ boardColor.oninput = () => {
         Number(gridItem[i].getAttribute("data-shade")),
         background
       );
+    } else if (gridItem[i].getAttribute("data-inked") == "false") {
+      gridItem[i].style.background = "transparent";
     }
   }
 };
@@ -338,3 +321,7 @@ function hexToRgb(hex) {
       }
     : null;
 }
+
+// TODO:
+// 1) Refractor Code
+// 2) Fix bug when data-shade
