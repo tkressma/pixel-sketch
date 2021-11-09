@@ -317,7 +317,10 @@ function convertValues(rgb) {
 
 // Determines the background color based on the operation
 function setRGBBackground(item, operation, r, g, b) {
-  if (item.getAttribute("data-shade") == 0) {
+  if (
+    item.getAttribute("data-shade") == 0 &&
+    item.getAttribute("data-inked") != "true"
+  ) {
     item.style.background = "transparent";
   } else {
     switch (operation) {
