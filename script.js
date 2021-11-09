@@ -109,7 +109,7 @@ Array.from(gridItem).forEach((item) =>
           item.setAttribute("data-inked", true);
           item.setAttribute("data-shade", 0);
         } else if (eraser) {
-          item.style.background = background;
+          item.style.background = "transparent";
           item.setAttribute("data-inked", false);
           item.setAttribute("data-shade", 0);
         } else if (shading) {
@@ -252,8 +252,6 @@ boardColor.oninput = () => {
         Number(gridItem[i].getAttribute("data-shade")),
         background
       );
-    } else if (gridItem[i].getAttribute("data-inked") == "false") {
-      gridItem[i].style.background = "transparent";
     }
   }
 };
