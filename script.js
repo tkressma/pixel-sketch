@@ -69,8 +69,10 @@ const sliderSizeNumber = document.getElementById("grid-size-number");
 /* =============================== */
 
 // Initializes the drawing board by generating a board of X by Y "pixels".
-makeGrid(gridSize);
-function makeGrid(size) {
+// Upon initialization, each grid item is assigned event listeners to allow
+// for drawing functionality.
+initDrawingBoard(gridSize);
+function initDrawingBoard(size) {
   board.style.setProperty("--grid-rows", size);
   board.style.setProperty("--grid-cols", size);
 
@@ -87,7 +89,6 @@ function makeGrid(size) {
   Array.from(gridItem).forEach((item) =>
     item.addEventListener("mousedown", draw)
   );
-
   function draw() {
     toggle = true;
   }
@@ -166,14 +167,14 @@ function clearBoardElements(board) {
 
 // Brush and Eraser Tools
 eraseBtn.addEventListener("click", () => {
+  switchSelectedButton(eraseBtn);
   resetTools();
   eraser = true;
-  switchSelectedButton(eraseBtn);
 });
 brushBtn.addEventListener("click", () => {
+  switchSelectedButton(brushBtn);
   resetTools();
   brush = true;
-  switchSelectedButton(brushBtn);
 });
 
 // Shade Tool
@@ -194,7 +195,7 @@ function shadeTool(item, shadeValue) {
   let rgb = currentColor.match(/\d+/g);
   let [r, g, b] = convertValues(rgb);
 
-  // Gradually increase towards darker rgb values.
+  // Gradually increase the rgb values to make them darker.
   setRGBBackground(item, "shade", r, g, b);
 }
 
@@ -216,7 +217,7 @@ function lightenTool(item, shadeValue) {
   let rgb = currentColor.match(/\d+/g);
   let [r, g, b] = convertValues(rgb);
 
-  // Gradually increase towards darker rgb values.
+  // Gradually increase rgb values to make them lighter.
   setRGBBackground(item, "lighten", r, g, b);
 }
 
@@ -288,6 +289,7 @@ function fillColorPallete() {
 }
 
 // Helper Functions
+
 // Switches the active button style.
 function switchSelectedButton(selectedButton) {
   let currentSelection = document.getElementsByClassName("button--selected")[0];
