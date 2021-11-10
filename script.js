@@ -68,10 +68,12 @@ const sliderSizeNumber = document.getElementById("grid-size-number");
 /* Board and Drawing Functionality */
 /* =============================== */
 
+fillColorPallete();
+initDrawingBoard(gridSize);
 // Initializes the drawing board by generating a board of X by Y "pixels".
 // Upon initialization, each grid item is assigned event listeners to allow
 // for drawing functionality.
-initDrawingBoard(gridSize);
+
 function initDrawingBoard(size) {
   board.style.setProperty("--grid-rows", size);
   board.style.setProperty("--grid-cols", size);
@@ -230,6 +232,15 @@ brushColor.oninput = () => {
   ink = brushColor.value;
 };
 
+// Allows a user to select colors from the color palette provided
+console.log(document.getElementsByClassName("color-palette-option"));
+const colorOption = document.getElementsByClassName("color-palette-option");
+Array.from(colorOption).forEach((color) => {
+  color.addEventListener("click", () => {
+    ink = color.style.background;
+  });
+});
+
 // Background Color Picker
 boardColor.oninput = () => {
   let inputColor = hexToRgb(boardColor.value);
@@ -273,7 +284,6 @@ function adjustShade(item, shade, bg) {
 }
 
 // Fills the color pallete given the array of pre set colors.
-fillColorPallete();
 function fillColorPallete() {
   for (let i = 1; i <= 16; i++) {
     // Dyamically generate all color palette options
