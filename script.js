@@ -238,6 +238,7 @@ const colorOption = document.getElementsByClassName("color-palette-option");
 Array.from(colorOption).forEach((color) => {
   color.addEventListener("click", () => {
     ink = color.style.background;
+    brushColor.value = ConvertRGBtoHex(color.style.background);
   });
 });
 
@@ -317,6 +318,18 @@ function hexToRgb(hex) {
         b: parseInt(result[3], 16),
       }
     : null;
+}
+
+// Converts color codes from rgb to hex. Used when picking a color from the color palette.
+function ConvertRGBtoHex(color) {
+  let rgb = color.match(/\d+/g);
+  let [r, g, b] = convertValues(rgb);
+  return "#" + ColorToHex(r) + ColorToHex(g) + ColorToHex(b);
+}
+
+function ColorToHex(color) {
+  var hexadecimal = color.toString(16);
+  return hexadecimal.length == 1 ? "0" + hexadecimal : hexadecimal;
 }
 
 // Converts strings into number values to be used in the rgb color code
