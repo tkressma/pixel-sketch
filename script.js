@@ -63,6 +63,10 @@ const gridToggle = document.getElementById("gridBtn");
 const save = document.getElementById("saveBtn");
 const slider = document.getElementById("board-size-slider");
 const sliderSizeNumber = document.getElementById("grid-size-number");
+let undo = document.getElementById("undoBtn");
+let redo = document.getElementById("redoBtn");
+let redoArr = [];
+let redoHistory = [];
 let recentSketch = [];
 let sketchHistory = [];
 /* =============================== */
@@ -89,12 +93,13 @@ function initDrawingBoard(size) {
     board.appendChild(gridElement);
   }
 
-  // This allows for the undo/redo button.
+  // The following functions (draw, stopDrawing) allow for the undo/redo button.
   for (let item of gridItem) {
     item.addEventListener("mousedown", draw);
-    item.addEventListener("mouseup", stopDrawing);
   }
+
   function draw() {
+    console.log("Drawing");
     // Reset the current sketch.
     // Once the user draws, grid items will be added to the recentSketch array.
     // That array will then be stored in a history array.
@@ -103,6 +108,7 @@ function initDrawingBoard(size) {
     drawing = true;
   }
   function stopDrawing() {
+    console.log("Not drawing"); 
     // If the sketchHistory array is too long, remove the oldest sketch. 
     // This is to prevent performance issues.
     if (sketchHistory.length > 32) {
@@ -121,6 +127,12 @@ function initDrawingBoard(size) {
     ["mousedown", "mouseover"].forEach((event) =>
       item.addEventListener(event, function (e) {
         if ((e.buttons == 1 || e.buttons == 3) && drawing) {
+          // If a user is drawing and releases their mouse anywhere on the screen,
+          // stop drawing. Else, allow the user to seamlessly draw around as long as
+          // their mouse is held down. This prevents interrupting the user if their
+          // mouse happens to leave the drawing board, which also caused a bug in
+          // the undo/redo function.
+          document.addEventListener("mouseup", stopDrawing);
           // This object is used to keep track of what color a grid item is prior to being undone.
           let gridItemInfo = {
             name: item.getAttribute("data-grid-number"),
@@ -132,6 +144,7 @@ function initDrawingBoard(size) {
             recentSketch.push(gridItemInfo);
           }
 
+          // Determines the functionality of the drawing based on which tool is selected.
           if (brush) {
             item.style.background = ink;
             item.setAttribute("data-inked", true);
@@ -145,6 +158,8 @@ function initDrawingBoard(size) {
           } else if (lighten) {
             lightenTool(item, item.getAttribute("data-shade"));
           }
+        } else {
+          document.removeEventListener("mouseup", stopDrawing);
         }
       })
     )
@@ -152,22 +167,6 @@ function initDrawingBoard(size) {
 }
 
 
-let undo = document.getElementById("undoBtn");
-undo.addEventListener("click", undoSketch);
-function undoSketch() {
-  // Get the most recent sketch
-  let previousSketch = sketchHistory[sketchHistory.length-1];
-  
-  for (let item of gridItem) {
-    for (let previousItem of previousSketch) {
-      if (item.getAttribute("data-grid-number") === previousItem.name) {
-          item.style.background = previousItem.previousColor;
-        }
-    }
-  }
-  // Remove the stored sketch information.
-  sketchHistory.pop();
-}
 
 /* ===================== */
 /* Setting functionality */
@@ -205,6 +204,59 @@ function clearBoardElements(board) {
   while (board.firstChild) {
     board.removeChild(board.firstChild);
   }
+}
+
+
+/* ======================= */
+/* Redo/Undo Functionality */
+/* ======================= */
+undo.addEventListener("click", undoSketch);
+redo.addEventListener("click", redoSketch);
+
+function redoSketch() {
+let nextSketch = redoHistory[redoHistory.length-1];
+recentSketch = [];
+for (let item of gridItem) {
+  for (let nextItem of nextSketch) {
+    if (item.getAttribute("data-grid-number") === nextItem.name) {
+      let gridItemInfo = {
+        name: item.getAttribute("data-grid-number"),
+        previousColor: item.style.background,
+      };
+      recentSketch.push(gridItemInfo);
+
+
+      item.style.background = nextItem.nextColor;
+    }
+  }
+}
+
+sketchHistory.push(recentSketch);
+redoHistory.pop();
+}
+
+function undoSketch() {
+  // Get the most recent sketch
+  let previousSketch = sketchHistory[sketchHistory.length-1];
+  redoArr = [];
+  for (let item of gridItem) {
+    for (let previousItem of previousSketch) {
+      if (item.getAttribute("data-grid-number") === previousItem.name) {
+          // Retrieving information for redo function
+          let redoItemInfo = {
+            name: item.getAttribute("data-grid-number"),
+            nextColor: item.style.background,
+          };
+          redoArr.push(redoItemInfo);
+
+          // Undo grid item to its previous state
+          item.style.background = previousItem.previousColor;
+        }
+      }
+  }
+  
+  redoHistory.push(redoArr);
+  sketchHistory.pop();
 }
 
 /* ===== */
