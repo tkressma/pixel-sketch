@@ -6,7 +6,7 @@
 
 // Drawing Board Vars
 let gridSize = 16;
-let toggle = false;
+let drawing = false;
 const board = document.getElementById("drawing-board");
 const gridItem = document.getElementsByClassName("grid-item");
 
@@ -63,6 +63,8 @@ const gridToggle = document.getElementById("gridBtn");
 const save = document.getElementById("saveBtn");
 const slider = document.getElementById("board-size-slider");
 const sliderSizeNumber = document.getElementById("grid-size-number");
+let recentSketch = [];
+let sketchHistory = [];
 /* =============================== */
 /* Board and Drawing Functionality */
 /* =============================== */
@@ -87,11 +89,49 @@ function initDrawingBoard(size) {
     board.appendChild(gridElement);
   }
 
+  // This allows for the undo/redo button.
+  for (let item of gridItem) {
+    item.addEventListener("mousedown", draw);
+    item.addEventListener("mouseup", stopDrawing);
+  }
+  function draw() {
+    // Reset the current sketch.
+    // Once the user draws, grid items will be added to the recentSketch array.
+    // That array will then be stored in a history array.
+    recentSketch = [];
+    // The user has started drawing.
+    drawing = true;
+  }
+  function stopDrawing() {
+    // If the sketchHistory array is too long, remove the oldest sketch. 
+    // This is to prevent performance issues.
+    if (sketchHistory.length > 32) {
+      console.log("too long!");
+      sketchHistory.shift();
+    } 
+    // Store current sketch into a history log for undo purposes.
+    sketchHistory.push(recentSketch);
+
+    // The user has stopped drawing.
+    drawing = false;
+  }
+
   // Allows the user to either color individual grid items or click and drag to draw.
   Array.from(gridItem).forEach((item) =>
-    ["mousedown", "mouseover"].forEach((e) =>
-      item.addEventListener(e, function (e) {
-        if (e.buttons == 1 || e.buttons == 3) {
+    ["mousedown", "mouseover"].forEach((event) =>
+      item.addEventListener(event, function (e) {
+        if ((e.buttons == 1 || e.buttons == 3) && drawing) {
+          // This object is used to keep track of what color a grid item is prior to being undone.
+          let gridItemInfo = {
+            name: item.getAttribute("data-grid-number"),
+            previousColor: item.style.background,
+          };
+          // If a grid item has already been added to the current sketch array, ignore it.
+          // This prevents the object from storing the wrong color previous to being drawn over.
+          if (!recentSketch.some((x) => x.name === item.getAttribute("data-grid-number"))) {
+            recentSketch.push(gridItemInfo);
+          }
+
           if (brush) {
             item.style.background = ink;
             item.setAttribute("data-inked", true);
@@ -109,6 +149,24 @@ function initDrawingBoard(size) {
       })
     )
   );
+}
+
+
+let undo = document.getElementById("undoBtn");
+undo.addEventListener("click", undoSketch);
+function undoSketch() {
+  // Get the most recent sketch
+  let previousSketch = sketchHistory[sketchHistory.length-1];
+  
+  for (let item of gridItem) {
+    for (let previousItem of previousSketch) {
+      if (item.getAttribute("data-grid-number") === previousItem.name) {
+          item.style.background = previousItem.previousColor;
+        }
+    }
+  }
+  // Remove the stored sketch information.
+  sketchHistory.pop();
 }
 
 /* ===================== */
