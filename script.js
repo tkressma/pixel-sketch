@@ -63,7 +63,6 @@ const gridToggle = document.getElementById("gridBtn");
 const save = document.getElementById("saveBtn");
 const slider = document.getElementById("board-size-slider");
 const sliderSizeNumber = document.getElementById("grid-size-number");
-
 /* =============================== */
 /* Board and Drawing Functionality */
 /* =============================== */
@@ -84,28 +83,15 @@ function initDrawingBoard(size) {
     gridElement.style.background = "transparent";
     gridElement.setAttribute("data-inked", false);
     gridElement.setAttribute("data-shade", 0);
+    gridElement.setAttribute("data-grid-number", i);
     board.appendChild(gridElement);
-  }
-
-  // If a user is holding their mouse down, continue to allow the user to draw.
-  Array.from(gridItem).forEach((item) =>
-    item.addEventListener("mousedown", draw)
-  );
-  function draw() {
-    toggle = true;
-  }
-
-  // Listens for when the user releases the mouse, disallowing the user to draw.
-  document.body.addEventListener("mouseup", stopDrawing, false);
-  function stopDrawing() {
-    toggle = false;
   }
 
   // Allows the user to either color individual grid items or click and drag to draw.
   Array.from(gridItem).forEach((item) =>
-    ["mousedown", "mouseenter"].forEach((e) =>
-      item.addEventListener(e, () => {
-        if (toggle) {
+    ["mousedown", "mouseover"].forEach((e) =>
+      item.addEventListener(e, function (e) {
+        if (e.buttons == 1 || e.buttons == 3) {
           if (brush) {
             item.style.background = ink;
             item.setAttribute("data-inked", true);
@@ -233,7 +219,6 @@ brushColor.oninput = () => {
 };
 
 // Allows a user to select colors from the color palette provided
-console.log(document.getElementsByClassName("color-palette-option"));
 const colorOption = document.getElementsByClassName("color-palette-option");
 Array.from(colorOption).forEach((color) => {
   color.addEventListener("click", () => {
@@ -299,7 +284,9 @@ function fillColorPallete() {
   }
 }
 
-// Helper Functions
+/* ================ */
+/* Helper Functions */
+/* ================ */
 
 // Switches the active button style.
 function switchSelectedButton(selectedButton) {
