@@ -8,7 +8,7 @@
 let gridSize = 16;
 let drawing = false;
 const board = document.getElementById("drawing-board");
-const gridItem = document.getElementsByClassName("grid-item");
+const gridItems = document.getElementsByClassName("grid-item");
 
 // Tools Vars
 let ink = "#000000";
@@ -17,6 +17,7 @@ let brush = true;
 let eraser = false;
 let shading = false;
 let lighten = false;
+let bucket = false;
 const brushBtn = document.getElementById("brushBtn");
 const eraseBtn = document.getElementById("eraseBtn");
 const lightenBtn = document.getElementById("lightenBtn");
@@ -92,14 +93,14 @@ function initDrawingBoard(size) {
   }
 
   // The following functions (draw, stopDrawing) allow for the undo/redo button.
-  for (let item of gridItem) {
+  for (let item of gridItems) {
     item.addEventListener("mousedown", draw);
   }
 
   function draw() {
     console.log("Drawing");
     // Reset the current sketch and clear redo history.
-    // Once the user draws, grid items will be added to the undoArr array.
+    // Once the user draws, Items items will be added to the undoArr array.
     // That array will then be stored in a history array.
     undoArr = [], redoHistory = [];
     // The user has started drawing.
@@ -120,7 +121,7 @@ function initDrawingBoard(size) {
   }
 
   // Allows the user to either color individual grid items or click and drag to draw.
-  Array.from(gridItem).forEach((item) =>
+  Array.from(gridItems).forEach((item) =>
     ["mousedown", "mouseover"].forEach((event) =>
       item.addEventListener(event, function (e) {
         if ((e.buttons == 1 || e.buttons == 3) && drawing) {
@@ -154,6 +155,8 @@ function initDrawingBoard(size) {
             shadeTool(item, item.getAttribute("data-shade"));
           } else if (lighten) {
             lightenTool(item, item.getAttribute("data-shade"));
+          } else if (bucket) {
+            bucketTool(item);
           }
         } else {
           document.removeEventListener("mouseup", stopDrawing);
@@ -163,7 +166,6 @@ function initDrawingBoard(size) {
   );
 }
 
-
 /* ===================== */
 /* Setting functionality */
 /* ===================== */
@@ -172,7 +174,7 @@ function initDrawingBoard(size) {
 clear.addEventListener("click", clearBoard);
 function clearBoard() {
   board.style.background = background;
-  Array.from(gridItem).forEach((item) => {
+  Array.from(gridItems).forEach((item) => {
     item.style.background = "transparent";
     item.setAttribute("data-inked", false);
     item.setAttribute("data-shade", 0);
@@ -182,7 +184,7 @@ function clearBoard() {
 // Toggle Grid
 gridToggle.addEventListener("click", toggleGrid);
 function toggleGrid() {
-  Array.from(gridItem).forEach((item) =>
+  Array.from(gridItems).forEach((item) =>
     item.classList.toggle("grid-item--nogrid")
   );
 }
@@ -214,7 +216,7 @@ let sketch = redoHistory[redoHistory.length-1];
 undoArr = [];
 
 // Find the specific grid items that are going to be updated to "redo" their past state.
-for (let item of gridItem) {
+for (let item of gridItems) {
   for (let nextItem of sketch) {
     let { id, storedColor } = nextItem;
     if (item.getAttribute("data-id") === id) {
@@ -241,7 +243,7 @@ function undoSketch() {
   redoArr = [];
 
   // Find the specific grid items that are going to be updated to "undo" their current state.
-  for (let item of gridItem) {
+  for (let item of gridItems) {
     for (let previousItem of sketch) {
       let { id, storedColor } = previousItem;
       if (item.getAttribute("data-id") === id) {
@@ -322,6 +324,63 @@ function lightenTool(item, shadeValue) {
   setRGBBackground(item, "lighten", r, g, b);
 }
 
+
+// Bucket tool
+bucketBtn.addEventListener("click", () => {
+  switchSelectedButton(bucketBtn);
+  resetTools();
+  bucket = true;
+})
+
+function bucketTool(selectedItem) {
+  //
+  // TODO: Allow these variables to change when a user changes the grid size.
+  //
+  // These generate a 16x16 2d grid of the grid items. This gives each grid item a specified coordinate.
+  let gridItemsArray = Array.from(gridItems);
+  const grid = toMatrix(gridItemsArray, gridSize);
+
+
+  const visited = new Set();
+  // The target color is the color that will be filled and replaced.
+  const targetColor = selectedItem.style.background;
+  
+  // Retrieve X,Y coordinates of selected position.
+  const selectedItemPos = Number(selectedItem.getAttribute("data-id"))
+  let posX = Math.floor(selectedItemPos / gridSize);
+  let posY = selectedItemPos % gridSize;
+  fill(posX, posY, ink);
+
+  // Base case for recursion in the fill function
+  function isValid(r,c, pos) {
+    if (r < 0 || r > gridSize-1) return false;
+    if (c < 0 || r > gridSize-1) return false;
+    if (grid[c] === undefined || grid[r][c].style.background !== targetColor || visited.has(pos)) return false;
+    return true;
+  }
+
+  // Flood fill algorithm
+  function fill(r,c,newColor) {
+    let pos = r + ',' + c;
+    if (isValid(r,c,pos) === false) return;
+    visited.add(pos);
+    grid[r][c].style.background = newColor;
+    fill(r+1,c,newColor);
+    fill(r-1,c,newColor);
+    fill(r,c-1,newColor);
+    fill(r,c+1,newColor);
+  }
+
+}
+
+function toMatrix(arr, width) {
+  return arr.reduce(function (rows, key, index) {
+    return (index % width == 0 ? rows.push([key]) : rows[rows.length - 1].push(key)) && rows;
+  }, []);
+}
+
+
+
 /* ============= */
 /* Color Pickers */
 /* ============= */
@@ -348,12 +407,12 @@ boardColor.oninput = () => {
   background = `rgb(${r},${g},${b})`;
   board.style.background = background;
 
-  for (let i = 0; i < gridItem.length; i++) {
-    if (gridItem[i].dataset.shade != 0 && gridItem[i].dataset.inked != "true") {
-      gridItem[i].style.background = background;
+  for (let i = 0; i < gridItems.length; i++) {
+    if (gridItems[i].dataset.shade != 0 && gridItems[i].dataset.inked != "true") {
+      gridItems[i].style.background = background;
       adjustShade(
-        gridItem[i],
-        Number(gridItem[i].getAttribute("data-shade")),
+        gridItems[i],
+        Number(gridItems[i].getAttribute("data-shade")),
         background
       );
     }
