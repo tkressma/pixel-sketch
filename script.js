@@ -9,6 +9,8 @@ let gridSize = 16;
 let drawing = false;
 const board = document.getElementById("drawing-board");
 const gridItems = document.getElementsByClassName("grid-item");
+let gridItemsArray = Array.from(gridItems);
+let grid = toMatrix(gridItemsArray, gridSize);
 
 // Tools Vars
 let ink = "#000000";
@@ -116,6 +118,7 @@ function initDrawingBoard(size) {
     // Store current sketch into a history log for undo purposes.
     undoHistory.push(undoArr);
 
+
     // The user has stopped drawing.
     drawing = false;
   }
@@ -139,7 +142,7 @@ function initDrawingBoard(size) {
           // If a grid item has already been added to the current sketch array, ignore it.
           // This prevents the object from storing the wrong color previous to being drawn over.
           if (!undoArr.some((gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id"))) {
-            undoArr.push(gridItemInfo);
+            if (bucket === false) undoArr.push(gridItemInfo)
           }
 
           // Determines the functionality of the drawing based on which tool is selected.
@@ -220,12 +223,8 @@ for (let item of gridItems) {
   for (let nextItem of sketch) {
     let { id, storedColor } = nextItem;
     if (item.getAttribute("data-id") === id) {
-      // Retrieving information for undo function
-      let gridItemInfo = {
-        id: item.getAttribute("data-id"),
-        storedColor: item.style.background,
-      };
-      undoArr.push(gridItemInfo);
+      // Retrieving information about current item and storing it in an undo storage array.
+      storeCurrentGridItemData(item, "undo");
 
       // Redo grid item to its previous state
       item.style.background = storedColor;
@@ -233,8 +232,9 @@ for (let item of gridItems) {
   }
 }
 
-undoHistory.push(undoArr);
-redoHistory.pop();
+  undoHistory.push(undoArr);
+  redoHistory.pop();
+
 }
 
 function undoSketch() {
@@ -247,21 +247,18 @@ function undoSketch() {
     for (let previousItem of sketch) {
       let { id, storedColor } = previousItem;
       if (item.getAttribute("data-id") === id) {
-          // Retrieving information for redo function
-          let gridItemInfo = {
-            id: item.getAttribute("data-id"),
-            storedColor: item.style.background,
-          };
-          redoArr.push(gridItemInfo);
+          // Retrieving information about current item and storing it in a redo storage array.
+          storeCurrentGridItemData(item, "redo");
 
           // Undo grid item to its previous state
           item.style.background = storedColor;
         }
       }
   }
-  
+
   redoHistory.push(redoArr);
   undoHistory.pop();
+  
 }
 
 /* ===== */
@@ -334,11 +331,12 @@ bucketBtn.addEventListener("click", () => {
 
 function bucketTool(selectedItem) {
   //
-  // TODO: Allow these variables to change when a user changes the grid size.
+  // TODO: 
+  // TODO: Fix undo working with bucket tool! Memory leak/storage problem...
   //
   // These generate a 16x16 2d grid of the grid items. This gives each grid item a specified coordinate.
-  let gridItemsArray = Array.from(gridItems);
-  const grid = toMatrix(gridItemsArray, gridSize);
+  gridItemsArray = Array.from(gridItems);
+  grid = toMatrix(gridItemsArray, gridSize);
 
 
   const visited = new Set();
@@ -364,7 +362,10 @@ function bucketTool(selectedItem) {
     let pos = r + ',' + c;
     if (isValid(r,c,pos) === false) return;
     visited.add(pos);
+    storeCurrentGridItemData(grid[r][c], "undo");
     grid[r][c].style.background = newColor;
+
+
     fill(r+1,c,newColor);
     fill(r-1,c,newColor);
     fill(r,c-1,newColor);
@@ -459,6 +460,16 @@ function fillColorPallete() {
 /* ================ */
 /* Helper Functions */
 /* ================ */
+
+// Gets the current grid item, stores the current color it has, and adds it to an undo storage array.
+function storeCurrentGridItemData(item, tool) {
+  let gridItemInfo = {
+    id: item.getAttribute("data-id"),
+    storedColor: item.style.background,
+  };
+
+  tool === "undo" ? undoArr.push(gridItemInfo) : redoArr.push(gridItemInfo);
+}
 
 // Switches the active button style.
 function switchSelectedButton(selectedButton) {
