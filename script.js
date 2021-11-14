@@ -69,7 +69,10 @@ const slider = document.getElementById("board-size-slider");
 const sliderSizeNumber = document.getElementById("grid-size-number");
 let undo = document.getElementById("undoBtn");
 let redo = document.getElementById("redoBtn");
-let redoArr = [], redoHistory = [], undoArr = [], undoHistory = [];
+let redoArr = [],
+  redoHistory = [],
+  undoArr = [],
+  undoHistory = [];
 
 /* =============================== */
 /* Board and Drawing Functionality */
@@ -105,20 +108,19 @@ function initDrawingBoard(size) {
     // Reset the current sketch and clear redo history.
     // Once the user draws, Items items will be added to the undoArr array.
     // That array will then be stored in a history array.
-    undoArr = [], redoHistory = [];
+    (undoArr = []), (redoHistory = []);
     // The user has started drawing.
     drawing = true;
   }
   function stopDrawing() {
-    console.log("Stop drawing"); 
-    // If the undoHistory array is too long, remove the oldest sketch. 
+    console.log("Stop drawing");
+    // If the undoHistory array is too long, remove the oldest sketch.
     // This is to prevent performance issues.
     if (undoHistory.length > 32) {
       undoHistory.shift();
-    } 
+    }
     // Store current sketch into a history log for undo purposes.
     undoHistory.push(undoArr);
-
 
     // The user has stopped drawing.
     drawing = false;
@@ -143,8 +145,12 @@ function initDrawingBoard(size) {
           };
           // If a grid item has already been added to the current sketch array, ignore it.
           // This prevents the object from storing the wrong color previous to being drawn over.
-          if (!undoArr.some((gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id"))) {
-            if (bucket === false) undoArr.push(gridItemInfo)
+          if (
+            !undoArr.some(
+              (gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id")
+            )
+          ) {
+            if (bucket === false) undoArr.push(gridItemInfo);
           }
 
           // Determines the functionality of the drawing based on which tool is selected.
@@ -216,39 +222,50 @@ undo.addEventListener("click", undoSketch);
 redo.addEventListener("click", redoSketch);
 
 function redoSketch() {
-// Get the most recently undone sketch
-let sketch = redoHistory[redoHistory.length-1];
-undoArr = [];
+  // If the redo history array is empty, do not give the option to undo.
+  if (redoHistory.length === 0) {
+    console.log("Block button");
+  } else {
+    // Get the most recently undone sketch
+    let sketch = redoHistory[redoHistory.length - 1];
+    undoArr = [];
 
-// Find the specific grid items that are going to be updated to "redo" their past state.
-for (let item of gridItems) {
-  for (let nextItem of sketch) {
-    let { id, storedColor, storedShade } = nextItem;
-    if (item.getAttribute("data-id") === id) {
-      // Retrieving information about current item and storing it in an undo storage array.
-      storeCurrentGridItemData(item, "undo");
+    // Find the specific grid items that are going to be updated to "redo" their past state.
+    for (let item of gridItems) {
+      for (let nextItem of sketch) {
+        let { id, storedColor, storedShade } = nextItem;
+        if (item.getAttribute("data-id") === id) {
+          // Retrieving information about current item and storing it in an undo storage array.
+          storeCurrentGridItemData(item, "undo");
 
-      // Redo grid item to its previous state
-      item.style.background = storedColor;
-      item.setAttribute("data-shade", storedShade);
+          // Redo grid item to its previous state
+          item.style.background = storedColor;
+          item.setAttribute("data-shade", storedShade);
+        }
+      }
     }
+
+    undoHistory.push(undoArr);
+    redoHistory.pop();
   }
 }
 
-  undoHistory.push(undoArr);
-  redoHistory.pop();
-}
-
 function undoSketch() {
-  // Get the most recent sketch
-  let sketch = undoHistory[undoHistory.length-1];
-  redoArr = [];
+  // If the undo history array is empty, do not give the option to undo.
+  if (undoHistory.length === 0) {
+    console.log("Block button");
+  } else {
+    // Get the most recent sketch
+    let sketch = undoHistory[undoHistory.length - 1];
 
-  // Find the specific grid items that are going to be updated to "undo" their current state.
-  for (let item of gridItems) {
-    for (let previousItem of sketch) {
-      let { id, storedColor, storedShade } = previousItem;
-      if (item.getAttribute("data-id") === id) {
+    redoArr = [];
+
+    // Find the specific grid items that are going to be updated to "undo" their current state.
+
+    for (let item of gridItems) {
+      for (let previousItem of sketch) {
+        let { id, storedColor, storedShade } = previousItem;
+        if (item.getAttribute("data-id") === id) {
           // Retrieving information about current item and storing it in a redo storage array.
           storeCurrentGridItemData(item, "redo");
 
@@ -257,11 +274,11 @@ function undoSketch() {
           item.setAttribute("data-shade", storedShade);
         }
       }
-  }
+    }
 
-  redoHistory.push(redoArr);
-  undoHistory.pop();
-  
+    redoHistory.push(redoArr);
+    undoHistory.pop();
+  }
 }
 
 /* ===== */
@@ -324,13 +341,12 @@ function lightenTool(item, shadeValue) {
   setRGBBackground(item, "lighten", r, g, b);
 }
 
-
 // Bucket tool
 bucketBtn.addEventListener("click", () => {
   switchSelectedButton(bucketBtn);
   resetTools();
   bucket = true;
-})
+});
 
 function bucketTool(selectedItem) {
   // These generate a 2d grid of the grid items based on the current size of the board. This gives each grid item a specified coordinate.
@@ -340,44 +356,50 @@ function bucketTool(selectedItem) {
   const visited = new Set();
   // The target color is the color that will be filled and replaced.
   const targetColor = selectedItem.style.background;
-  
+
   // Retrieve X,Y coordinates of selected position.
-  const selectedItemPos = Number(selectedItem.getAttribute("data-id"))
+  const selectedItemPos = Number(selectedItem.getAttribute("data-id"));
   let posX = Math.floor(selectedItemPos / gridSize);
   let posY = selectedItemPos % gridSize;
   fill(posX, posY, ink);
 
   // Base case for recursion in the fill function
-  function isValid(r,c, pos) {
-    if (r < 0 || r > gridSize-1) return false;
-    if (c < 0 || r > gridSize-1) return false;
-    if (grid[c] === undefined || grid[r][c].style.background !== targetColor || visited.has(pos)) return false;
+  function isValid(r, c, pos) {
+    if (r < 0 || r > gridSize - 1) return false;
+    if (c < 0 || r > gridSize - 1) return false;
+    if (
+      grid[c] === undefined ||
+      grid[r][c].style.background !== targetColor ||
+      visited.has(pos)
+    )
+      return false;
     return true;
   }
 
   // Flood fill algorithm
-  function fill(r,c,newColor) {
-    let pos = r + ',' + c;
-    if (isValid(r,c,pos) === false) return;
+  function fill(r, c, newColor) {
+    let pos = r + "," + c;
+    if (isValid(r, c, pos) === false) return;
     visited.add(pos);
     storeCurrentGridItemData(grid[r][c], "undo");
     grid[r][c].style.background = newColor;
 
-    fill(r+1,c,newColor);
-    fill(r-1,c,newColor);
-    fill(r,c-1,newColor);
-    fill(r,c+1,newColor);
+    fill(r + 1, c, newColor);
+    fill(r - 1, c, newColor);
+    fill(r, c - 1, newColor);
+    fill(r, c + 1, newColor);
   }
-
 }
 
 function toMatrix(arr, width) {
   return arr.reduce(function (rows, key, index) {
-    return (index % width == 0 ? rows.push([key]) : rows[rows.length - 1].push(key)) && rows;
+    return (
+      (index % width == 0
+        ? rows.push([key])
+        : rows[rows.length - 1].push(key)) && rows
+    );
   }, []);
 }
-
-
 
 /* ============= */
 /* Color Pickers */
@@ -406,7 +428,10 @@ boardColor.oninput = () => {
   board.style.background = background;
 
   for (let i = 0; i < gridItems.length; i++) {
-    if (gridItems[i].dataset.shade != 0 && gridItems[i].dataset.inked != "true") {
+    if (
+      gridItems[i].dataset.shade != 0 &&
+      gridItems[i].dataset.inked != "true"
+    ) {
       gridItems[i].style.background = background;
       adjustShade(
         gridItems[i],
