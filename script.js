@@ -98,88 +98,140 @@ function initDrawingBoard(size) {
     board.appendChild(gridElement);
   }
 
-  // The following functions (draw, stopDrawing) allow for the undo/redo button.
-  for (let item of gridItems) {
-    item.addEventListener("mousedown", draw);
-  }
+  initDrawing();
+}
 
-  function draw() {
-    console.log("Drawing");
-    // Reset the current sketch and clear redo history.
-    // Once the user draws, Items items will be added to the undoArr array.
-    // That array will then be stored in a history array.
-    (undoArr = []), (redoHistory = []);
-    // The user has started drawing.
-    drawing = true;
-  }
-  function stopDrawing() {
-    console.log("Stop drawing");
-    // If the undoHistory array is too long, remove the oldest sketch.
-    // This is to prevent performance issues.
-    if (undoHistory.length > 32) {
-      undoHistory.shift();
+function initDrawing() {
+    // The following functions (draw, stopDrawing) allow for the undo/redo button.
+    for (let item of gridItems) {
+      item.addEventListener("mousedown", draw);
     }
-    // Store current sketch into a history log for undo purposes.
-    undoHistory.push(undoArr);
-
-    // The user has stopped drawing.
-    drawing = false;
-  }
-
-  // Allows the user to either color individual grid items or click and drag to draw.
-  Array.from(gridItems).forEach((item) =>
-    ["mousedown", "mouseover"].forEach((event) =>
-      item.addEventListener(event, function (e) {
-        if ((e.buttons == 1 || e.buttons == 3) && drawing) {
-          // If a user is drawing and releases their mouse anywhere on the screen,
-          // stop drawing. Else, allow the user to seamlessly draw around as long as
-          // their mouse is held down. This prevents interrupting the user if their
-          // mouse happens to leave the drawing board, which also caused a bug in
-          // the undo/redo function.
-          document.addEventListener("mouseup", stopDrawing);
-          // This object is used to keep track of what color a grid item is prior to being undone.
-          let gridItemInfo = {
-            id: item.getAttribute("data-id"),
-            storedColor: item.style.background,
-            storedShade: item.getAttribute("data-shade"),
-          };
-          // If a grid item has already been added to the current sketch array, ignore it.
-          // This prevents the object from storing the wrong color previous to being drawn over.
-          if (
-            !undoArr.some(
-              (gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id")
-            )
-          ) {
-            if (bucket === false) undoArr.push(gridItemInfo);
+  
+    function draw() {
+      console.log("Drawing");
+      // Reset the current sketch and clear redo history.
+      // Once the user draws, Items items will be added to the undoArr array.
+      // That array will then be stored in a history array.
+      (undoArr = []), (redoHistory = []);
+      // The user has started drawing.
+      drawing = true;
+    }
+    function stopDrawing() {
+      console.log("Stop drawing");
+      // If the undoHistory array is too long, remove the oldest sketch.
+      // This is to prevent performance issues.
+      if (undoHistory.length > 32) {
+        undoHistory.shift();
+      }
+      // Store current sketch into a history log for undo purposes.
+      undoHistory.push(undoArr);
+  
+      // The user has stopped drawing.
+      drawing = false;
+    }
+  
+    // Allows the user to either color individual grid items or click and drag to draw.
+    Array.from(gridItems).forEach((item) =>
+      ["mousedown", "mouseover"].forEach((event) =>
+        item.addEventListener(event, function (e) {
+          if ((e.buttons == 1 || e.buttons == 3) && drawing) {
+            // If a user is drawing and releases their mouse anywhere on the screen,
+            // stop drawing. Else, allow the user to seamlessly draw around as long as
+            // their mouse is held down. This prevents interrupting the user if their
+            // mouse happens to leave the drawing board, which also caused a bug in
+            // the undo/redo function.
+            document.addEventListener("mouseup", stopDrawing);
+            // This object is used to keep track of what color a grid item is prior to being undone.
+            let gridItemInfo = {
+              id: item.getAttribute("data-id"),
+              storedColor: item.style.background,
+              storedShade: item.getAttribute("data-shade"),
+            };
+            // If a grid item has already been added to the current sketch array, ignore it.
+            // This prevents the object from storing the wrong color previous to being drawn over.
+            if (
+              !undoArr.some(
+                (gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id")
+              )
+            ) {
+              if (bucket === false) undoArr.push(gridItemInfo);
+            }
+  
+            // Determines the functionality of the drawing based on which tool is selected.
+            if (brush) {
+              item.style.background = ink;
+              item.setAttribute("data-inked", true);
+              item.setAttribute("data-shade", 0);
+            } else if (eraser) {
+              item.style.background = "transparent";
+              item.setAttribute("data-inked", false);
+              item.setAttribute("data-shade", 0);
+            } else if (shading) {
+              shadeTool(item, item.getAttribute("data-shade"));
+            } else if (lighten) {
+              lightenTool(item, item.getAttribute("data-shade"));
+            } else if (bucket) {
+              bucketTool(item);
+            }
+          } else {
+            document.removeEventListener("mouseup", stopDrawing);
           }
-
-          // Determines the functionality of the drawing based on which tool is selected.
-          if (brush) {
-            item.style.background = ink;
-            item.setAttribute("data-inked", true);
-            item.setAttribute("data-shade", 0);
-          } else if (eraser) {
-            item.style.background = "transparent";
-            item.setAttribute("data-inked", false);
-            item.setAttribute("data-shade", 0);
-          } else if (shading) {
-            shadeTool(item, item.getAttribute("data-shade"));
-          } else if (lighten) {
-            lightenTool(item, item.getAttribute("data-shade"));
-          } else if (bucket) {
-            bucketTool(item);
-          }
-        } else {
-          document.removeEventListener("mouseup", stopDrawing);
-        }
-      })
-    )
-  );
+        })
+      )
+    );
 }
 
 /* ===================== */
 /* Setting functionality */
 /* ===================== */
+
+save.addEventListener("click", saveImage);
+// Save Image
+function saveImage() {
+  gridItemsArray = Array.from(gridItems);
+
+  let saveNumber = prompt("Which save slot? Enter 'One', 'Two', or 'Three'.");
+  let saveOption = `save${saveNumber}`;
+
+  let savedBoard = [];
+  for (let item of gridItemsArray) {
+    savedBoard.push(item.outerHTML);
+  }
+  localStorage.setItem(saveOption, JSON.stringify(savedBoard));
+  localStorage.setItem(`${saveOption}Background`, JSON.stringify(background))
+
+  console.log(saveOption);
+  console.log(`${saveOption}Background: ${background}`);
+}
+
+const saveOne = document.getElementById("saveOne");
+const saveTwo = document.getElementById("saveTwo");
+const saveThree = document.getElementById("saveThree");
+saveOne.addEventListener("click", function() { loadBoard("saveOne"); }, false);
+saveTwo.addEventListener("click", function() { loadBoard("saveTwo"); }, false);
+saveThree.addEventListener("click", function() { loadBoard("saveThree"); }, false);
+
+function loadBoard(saveOption) {
+  console.log("updating board");
+  console.log("Load board save option: " + saveOption);
+  let savedBoard = JSON.parse(localStorage.getItem(saveOption));
+  let savedBackground = JSON.parse(localStorage.getItem(`${saveOption}Background`))
+  console.log(savedBackground);
+  if (savedBoard === null) {
+    console.log("ERROR: No saved board!");
+    return;
+  }
+
+  boardColor.value = ConvertRGBtoHex(savedBackground);
+  board.style.background = savedBackground;
+  background = savedBackground;
+  
+  for (let i = 0; i < gridItems.length; i++) { 
+    gridItems[i].outerHTML = savedBoard[i];
+  };
+
+  initDrawing();
+}
 
 // Clear Board
 clear.addEventListener("click", clearBoard);
