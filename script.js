@@ -199,9 +199,6 @@ function saveImage() {
   }
   localStorage.setItem(saveOption, JSON.stringify(savedBoard));
   localStorage.setItem(`${saveOption}Background`, JSON.stringify(background))
-
-  console.log(saveOption);
-  console.log(`${saveOption}Background: ${background}`);
 }
 
 const saveOne = document.getElementById("saveOne");
@@ -212,20 +209,21 @@ saveTwo.addEventListener("click", function() { loadBoard("saveTwo"); }, false);
 saveThree.addEventListener("click", function() { loadBoard("saveThree"); }, false);
 
 function loadBoard(saveOption) {
-  console.log("updating board");
-  console.log("Load board save option: " + saveOption);
   let savedBoard = JSON.parse(localStorage.getItem(saveOption));
   let savedBackground = JSON.parse(localStorage.getItem(`${saveOption}Background`))
-  console.log(savedBackground);
-  if (savedBoard === null) {
+
+  if (savedBoard === null || savedBackground === null) {
+    // TODO: Don't allow buttons to be clicked if there is no available save!
     console.log("ERROR: No saved board!");
     return;
   }
 
+  updateSlider(Math.sqrt(savedBoard.length));
+
   boardColor.value = ConvertRGBtoHex(savedBackground);
   board.style.background = savedBackground;
   background = savedBackground;
-  
+
   for (let i = 0; i < gridItems.length; i++) { 
     gridItems[i].outerHTML = savedBoard[i];
   };
@@ -254,11 +252,15 @@ function toggleGrid() {
 
 // Grid Size Slider
 slider.oninput = () => {
-  gridSize = slider.value;
+  updateSlider(slider.value);
+};
+
+const updateSlider = (gridSize) => {
+  slider.value = gridSize;
   sliderSizeNumber.innerHTML = `${gridSize}x${gridSize}`;
   clearBoardElements(board);
   initDrawingBoard(gridSize);
-};
+}
 
 // Remove all board elements in order to resize the board
 function clearBoardElements(board) {
