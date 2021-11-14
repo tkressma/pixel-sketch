@@ -139,6 +139,7 @@ function initDrawingBoard(size) {
           let gridItemInfo = {
             id: item.getAttribute("data-id"),
             storedColor: item.style.background,
+            storedShade: item.getAttribute("data-shade"),
           };
           // If a grid item has already been added to the current sketch array, ignore it.
           // This prevents the object from storing the wrong color previous to being drawn over.
@@ -222,13 +223,14 @@ undoArr = [];
 // Find the specific grid items that are going to be updated to "redo" their past state.
 for (let item of gridItems) {
   for (let nextItem of sketch) {
-    let { id, storedColor } = nextItem;
+    let { id, storedColor, storedShade } = nextItem;
     if (item.getAttribute("data-id") === id) {
       // Retrieving information about current item and storing it in an undo storage array.
       storeCurrentGridItemData(item, "undo");
 
       // Redo grid item to its previous state
       item.style.background = storedColor;
+      item.setAttribute("data-shade", storedShade);
     }
   }
 }
@@ -245,13 +247,14 @@ function undoSketch() {
   // Find the specific grid items that are going to be updated to "undo" their current state.
   for (let item of gridItems) {
     for (let previousItem of sketch) {
-      let { id, storedColor } = previousItem;
+      let { id, storedColor, storedShade } = previousItem;
       if (item.getAttribute("data-id") === id) {
           // Retrieving information about current item and storing it in a redo storage array.
           storeCurrentGridItemData(item, "redo");
 
           // Undo grid item to its previous state
           item.style.background = storedColor;
+          item.setAttribute("data-shade", storedShade);
         }
       }
   }
@@ -460,6 +463,7 @@ function storeCurrentGridItemData(item, tool) {
   let gridItemInfo = {
     id: item.getAttribute("data-id"),
     storedColor: item.style.background,
+    storedShade: item.getAttribute("data-shade"),
   };
 
   tool === "undo" ? undoArr.push(gridItemInfo) : redoArr.push(gridItemInfo);
