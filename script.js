@@ -105,7 +105,6 @@ function initDrawingBoard(size) {
     // Reset the current sketch and clear redo history.
     // Once the user draws, Items items will be added to the undoArr array.
     // That array will then be stored in a history array.
-    console.log("Clear undoArr and redoHistory");
     undoArr = [], redoHistory = [];
     // The user has started drawing.
     drawing = true;
@@ -118,7 +117,6 @@ function initDrawingBoard(size) {
       undoHistory.shift();
     } 
     // Store current sketch into a history log for undo purposes.
-    console.log("Pushing to undoHistory");
     undoHistory.push(undoArr);
 
 
@@ -145,10 +143,7 @@ function initDrawingBoard(size) {
           // If a grid item has already been added to the current sketch array, ignore it.
           // This prevents the object from storing the wrong color previous to being drawn over.
           if (!undoArr.some((gridItemInfo) => gridItemInfo.id === item.getAttribute("data-id"))) {
-            if (bucket === false) {
-              console.log("Adding to undo...");
-              undoArr.push(gridItemInfo)
-            }
+            if (bucket === false) undoArr.push(gridItemInfo)
           }
 
           // Determines the functionality of the drawing based on which tool is selected.
@@ -230,7 +225,6 @@ for (let item of gridItems) {
     let { id, storedColor } = nextItem;
     if (item.getAttribute("data-id") === id) {
       // Retrieving information about current item and storing it in an undo storage array.
-      console.log("Adding to undo...");
       storeCurrentGridItemData(item, "undo");
 
       // Redo grid item to its previous state
@@ -239,7 +233,6 @@ for (let item of gridItems) {
   }
 }
 
-console.log("Pushing to undoHistory");
   undoHistory.push(undoArr);
   redoHistory.pop();
 }
@@ -255,7 +248,6 @@ function undoSketch() {
       let { id, storedColor } = previousItem;
       if (item.getAttribute("data-id") === id) {
           // Retrieving information about current item and storing it in a redo storage array.
-          console.log("Adding to redo...");
           storeCurrentGridItemData(item, "redo");
 
           // Undo grid item to its previous state
@@ -264,7 +256,6 @@ function undoSketch() {
       }
   }
 
-  console.log("Pushing to redoHistory");
   redoHistory.push(redoArr);
   undoHistory.pop();
   
@@ -366,7 +357,6 @@ function bucketTool(selectedItem) {
     let pos = r + ',' + c;
     if (isValid(r,c,pos) === false) return;
     visited.add(pos);
-    console.log("Adding to undo...");
     storeCurrentGridItemData(grid[r][c], "undo");
     grid[r][c].style.background = newColor;
 
