@@ -256,7 +256,8 @@ slider.oninput = () => {
 };
 
 // Updates the slider values based on user input as well as clears and updates the board to the new grid size.
-const updateSlider = (gridSize) => {
+const updateSlider = (sliderInput) => {
+  gridSize = sliderInput;
   slider.value = gridSize;
   sliderSizeNumber.innerHTML = `${gridSize}x${gridSize}`;
   clearBoardElements(board);
