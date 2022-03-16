@@ -108,7 +108,7 @@ board.addEventListener("mousedown", function (e) {
 // Allows the user to either color individual grid items or click and drag to draw.
 ["mousedown", "mouseover"].forEach((event) =>
   board.addEventListener(event, function (e) {
-    fillGridItem(e);
+    colorAndStoreGridItem(e);
   })
 );
 
