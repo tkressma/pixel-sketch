@@ -1,4 +1,4 @@
-![](./pixel-sketchpad-drawing.png)
+![](./images/pixel-sketchpad-drawing.png)
 # Pixel Sketchpad - An Interactive Web Application
 
 This is a web application built using vanilla JavaScript, HTML, and CSS inspired by MS Paint.
@@ -24,12 +24,17 @@ I hope whoever decides to check this out has a fun time playing around with the 
 
 ### Screenshot
 
-![](./pixel-sketchpad-screenshot.png)
+![](./images/pixel-sketchpad-screenshot.png)
 
 ### Continued development
 
 I had (or still have?) plans to develop a full stack social media application based around this pixel sketchpad. The main concept is that users speak their thoughts through their art and share it to their followers. Below is some concept artboards I designed using Adobe XD.
 
+![](./images/sketchshare-landing.png)
+
+![](./images/sketchshare-feed.png)
+
+![](./images/sketchshare-editor.png)
 ## Author
 
 - Twitter - [@tom_kressman](https://www.twitter.com/tom_kressman)

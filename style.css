@@ -150,7 +150,7 @@ body {
   font-family: "Poppins", sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
-  background: url(background.svg) no-repeat bottom;
+  background: url(./images/background.svg) no-repeat bottom;
   background-size: cover;
 }
 
