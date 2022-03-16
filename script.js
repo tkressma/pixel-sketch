@@ -97,95 +97,93 @@ function initDrawingBoard(size) {
     gridElement.setAttribute("data-id", i);
     board.appendChild(gridElement);
   }
-
-  initDrawing();
 }
 
-function initDrawing() {
-  // Event delegation to add functionality to each pixel on the board.
-  board.addEventListener("mousedown", function (e) {
-    // Matching strategy. Using event delegation to improve performance.
-    if (e.target.classList.contains("grid-item")) draw();
-  });
+// Event delegation to add functionality to each pixel on the board.
+board.addEventListener("mousedown", function (e) {
+  // Matching strategy. Using event delegation to improve performance.
+  if (e.target.classList.contains("grid-item")) draw();
+});
 
-  // Allows the user to either color individual grid items or click and drag to draw.
-  ["mousedown", "mouseover"].forEach((event) =>
-    board.addEventListener(event, function (e) {
-      if (e.target.classList.contains("grid-item")) fillGridItem(e);
-    })
-  );
+// Allows the user to either color individual grid items or click and drag to draw.
+["mousedown", "mouseover"].forEach((event) =>
+  board.addEventListener(event, function (e) {
+    fillGridItem(e);
+  })
+);
 
-  // The following functions (draw, stopDrawing) allow for the undo/redo button.
-  function draw() {
-    console.log("Drawing");
-    // Reset the current sketch and clear redo history.
-    // Once the user draws, Items items will be added to the undoArr array.
-    // That array will then be stored in a history array.
-    (undoArr = []), (redoHistory = []);
-    // The user has started drawing.
-    drawing = true;
-  }
-  function stopDrawing() {
-    console.log("Stop drawing");
-    // If the undoHistory array is too long, remove the oldest sketch.
-    // This is to prevent performance issues.
-    if (undoHistory.length > 32) {
-      undoHistory.shift();
-    }
-    // Store current sketch into a history log for undo purposes.
-    undoHistory.push(undoArr);
-
-    // The user has stopped drawing.
-    drawing = false;
-    console.log(undoHistory);
-  }
-
-  const fillGridItem = (e) => {
-    if (e.buttons == 1 && e.target.classList.contains("grid-item") && drawing) {
-      // If a user is drawing and releases their mouse anywhere on the screen,
-      // stop drawing. Else, allow the user to seamlessly draw around as long as
-      // their mouse is held down. This prevents interrupting the user if their
-      // mouse happens to leave the drawing board, which also caused a bug in
-      // the undo/redo function.
-      console.log();
-      document.addEventListener("mouseup", stopDrawing);
-      // This object is used to keep track of what color a grid item is prior to being undone.
-      let gridItemInfo = {
-        id: e.target.getAttribute("data-id"),
-        storedColor: e.target.style.background,
-        storedShade: e.target.getAttribute("data-shade"),
-      };
-      // If a grid item has already been added to the current sketch array, ignore it.
-      // This prevents the object from storing the wrong color previous to being drawn over.
-      if (
-        !undoArr.some(
-          (gridItemInfo) => gridItemInfo.id === e.target.getAttribute("data-id")
-        )
-      ) {
-        if (bucket === false) undoArr.push(gridItemInfo);
-      }
-
-      // Determines the functionality of the drawing based on which tool is selected.
-      if (brush) {
-        e.target.style.background = ink;
-        e.target.setAttribute("data-inked", true);
-        e.target.setAttribute("data-shade", 0);
-      } else if (eraser) {
-        e.target.style.background = "transparent";
-        e.target.setAttribute("data-inked", false);
-        e.target.setAttribute("data-shade", 0);
-      } else if (shading) {
-        shadeTool(e.target, e.target.getAttribute("data-shade"));
-      } else if (lighten) {
-        lightenTool(e.target, e.target.getAttribute("data-shade"));
-      } else if (bucket) {
-        bucketTool(e.target);
-      }
-    } else {
-      document.removeEventListener("mouseup", stopDrawing);
-    }
-  };
+// The following functions (draw, stopDrawing) allow for the undo/redo button.
+function draw() {
+  console.log("Drawing");
+  // Reset the current sketch and clear redo history.
+  // Once the user draws, Items items will be added to the undoArr array.
+  // That array will then be stored in a history array.
+  (undoArr = []), (redoHistory = []);
+  // The user has started drawing.
+  drawing = true;
 }
+function stopDrawing() {
+  console.log("Stop drawing");
+  // If the undoHistory array is too long, remove the oldest sketch.
+  // This is to prevent performance issues.
+  if (undoHistory.length > 32) {
+    undoHistory.shift();
+  }
+  // Store current sketch into a history log for undo purposes.
+  undoHistory.push(undoArr);
+
+  // The user has stopped drawing.
+  drawing = false;
+  console.log(undoHistory);
+}
+
+// This is responsible coloring in each pixel and storing each pixel in the undo array.
+// Without this, drawing and undo/redo functionality would not be possible.
+const colorAndStoreGridItem = (e) => {
+  if (e.buttons == 1 && e.target.classList.contains("grid-item") && drawing) {
+    // If a user is drawing and releases their mouse anywhere on the screen,
+    // stop drawing. Else, allow the user to seamlessly draw around as long as
+    // their mouse is held down. This prevents interrupting the user if their
+    // mouse happens to leave the drawing board, which also caused a bug in
+    // the undo/redo function.
+    console.log();
+    document.addEventListener("mouseup", stopDrawing);
+    // This object is used to keep track of what color a grid item is prior to being undone.
+    let gridItemInfo = {
+      id: e.target.getAttribute("data-id"),
+      storedColor: e.target.style.background,
+      storedShade: e.target.getAttribute("data-shade"),
+    };
+    // If a grid item has already been added to the current sketch array, ignore it.
+    // This prevents the object from storing the wrong color previous to being drawn over.
+    if (
+      !undoArr.some(
+        (gridItemInfo) => gridItemInfo.id === e.target.getAttribute("data-id")
+      )
+    ) {
+      if (bucket === false) undoArr.push(gridItemInfo);
+    }
+
+    // Determines the functionality of the drawing based on which tool is selected.
+    if (brush) {
+      e.target.style.background = ink;
+      e.target.setAttribute("data-inked", true);
+      e.target.setAttribute("data-shade", 0);
+    } else if (eraser) {
+      e.target.style.background = "transparent";
+      e.target.setAttribute("data-inked", false);
+      e.target.setAttribute("data-shade", 0);
+    } else if (shading) {
+      shadeTool(e.target, e.target.getAttribute("data-shade"));
+    } else if (lighten) {
+      lightenTool(e.target, e.target.getAttribute("data-shade"));
+    } else if (bucket) {
+      bucketTool(e.target);
+    }
+  } else {
+    document.removeEventListener("mouseup", stopDrawing);
+  }
+};
 
 /* ===================== */
 /* Setting functionality */
@@ -266,7 +264,7 @@ function clearBoard() {
     item.setAttribute("data-inked", false);
     item.setAttribute("data-shade", 0);
   });
-  undoHistory = [];
+  undoArr = [];
 }
 
 // Toggle Grid
@@ -294,6 +292,7 @@ const updateSlider = (sliderInput) => {
 // Remove all board elements in order to resize the board
 function clearBoardElements(board) {
   while (board.firstChild) {
+    console.log(board.firstChild);
     board.removeChild(board.firstChild);
   }
 }
