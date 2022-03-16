@@ -214,7 +214,6 @@ header {
   height: 600px;
   border: 2px solid black;
   background-color: white;
-  margin-left: 1rem;
   grid-template-rows: repeat(var(--grid-rows), 1fr);
   grid-template-columns: repeat(var(--grid-cols), 1fr);
   -webkit-user-drag: none;
@@ -255,13 +254,17 @@ header {
     "pen eraser"
     "lighten shade"
     "bucket rainbow"
+    "undo redo"
     "colors colors"
     "color-select bg-color-select"
     "color-palette color-palette"
     "settings settings"
     "clear grid-toggle"
     "save slider"
-    "save grid-size";
+    "save grid-size"
+    "saveOne saveOne"
+    "saveTwo saveTwo"
+    "saveThree saveThree";
 }
 
 button {
@@ -423,6 +426,26 @@ input[type="color" i] {
   text-align: center;
 }
 
+#undoBtn {
+  grid-area: undo;
+}
+
+#redoBtn {
+  grid-area: redo;
+}
+
+#saveOne {
+  grid-area: saveOne;
+}
+
+#saveTwo {
+  grid-area: saveTwo;
+}
+
+#saveThree {
+  grid-area: saveThree;
+}
+
 @media (max-width: 975px) {
   .container {
     flex-direction: column;
@@ -450,10 +473,15 @@ input[type="color" i] {
     grid-template-areas:
       "tools tools tools colors colors colors settings settings settings"
       "pen lighten rainbow color-select color-palette color-palette clear grid-toggle save"
+      "pen lighten rainbow color-select color-palette color-palette saveOne saveTwo saveThree"
+      "eraser shade bucket bg-color-select color-palette color-palette reserved reserved reserved"
       "eraser shade bucket bg-color-select color-palette color-palette slider slider slider"
       "eraser shade bucket bg-color-select color-palette color-palette grid-size grid-size grid-size";
   }
-
+  /* 
+  "saveOne saveOne"
+  "saveTwo saveTwo"
+  "saveThree saveThree"; */
   .color-palette {
     margin: 0rem 0.25rem;
   }
