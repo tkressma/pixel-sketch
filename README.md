@@ -30,7 +30,7 @@ I hope whoever decides to check this out has a fun time playing around with the 
 
 I had (or still have?) plans to develop a full stack social media application based around this pixel sketchpad. The main concept is that users speak their thoughts through their art and share it to their followers. 
 
-Below is some concept artboards I designed using Adobe XD.
+Below are some concept artboards I designed using Adobe XD.
 
 ![](./images/sketchshare-landing.png)
 
